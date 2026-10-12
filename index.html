@@ -3,17 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Christmas room and seating planner | prepared for The Grand Pier</title>
+<title>Room and seating planner | prepared for The Grand Pier</title>
 <meta name="theme-color" content="#066cb5">
 <meta name="robots" content="noindex, nofollow">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%84%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%AA%91%3C/text%3E%3C/svg%3E">
+<meta name="color-scheme" content="light only">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --brand:#066cb5; --brand-ink:#FFFFFF; --hdr:#066cb5; --hdr-ink:#FFFFFF;
-    --outside:#DCE8F2; --paper:#EAF2F9; --sheet:#FFFFFF; --field:#FFFFFF; --hover:#E3EEF7;
+    --outside:#DCE8F2; --paper:#FFFFFF; --sheet:#FFFFFF; --field:#FFFFFF; --hover:#E3EEF7;
     --ink:#0A2740; --ink2:#1C4668; --muted:#506C84; --rule:#C9DCEC;
     --accent:#FFDD00; --accent-ink:#0A2740; --sea:#0B7A75; --alert:#BE3D1A; --warn:#8A5A00;
     --plan-bg:#FCFEFF; --grid:#E4EEF6; --grid5:#C6D9E9; --wall:#0A2740;
@@ -23,30 +24,11 @@
     --body:"Nunito", "Helvetica Neue", Arial, sans-serif;
     --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-    --brand:#5DAEEB; --brand-ink:#052238; --hdr:#07416E; --hdr-ink:#FFFFFF;
-    --outside:#05131F; --paper:#071B2E; --sheet:#0D2A45; --field:#0A2238; --hover:#143A5C;
-    --ink:#EAF3FB; --ink2:#C3D8EA; --muted:#92B2CB; --rule:#21496D;
-    --accent:#FFDD00; --accent-ink:#0A2740; --sea:#4FC1BA; --alert:#FF8E6E; --warn:#E6B65A;
-    --plan-bg:#0A2238; --grid:#133350; --grid5:#1F4A6E; --wall:#DCEBF7;
-    --feature:#143A5C; --feature-edge:#7FA9CC; --dim:#9CC0DD;
-    --table:#F0E8D5; --table-edge:#0A2740;
-    }
-  }
-  :root[data-theme="dark"]{
-    --brand:#5DAEEB; --brand-ink:#052238; --hdr:#07416E; --hdr-ink:#FFFFFF;
-    --outside:#05131F; --paper:#071B2E; --sheet:#0D2A45; --field:#0A2238; --hover:#143A5C;
-    --ink:#EAF3FB; --ink2:#C3D8EA; --muted:#92B2CB; --rule:#21496D;
-    --accent:#FFDD00; --accent-ink:#0A2740; --sea:#4FC1BA; --alert:#FF8E6E; --warn:#E6B65A;
-    --plan-bg:#0A2238; --grid:#133350; --grid5:#1F4A6E; --wall:#DCEBF7;
-    --feature:#143A5C; --feature-edge:#7FA9CC; --dim:#9CC0DD;
-    --table:#F0E8D5; --table-edge:#0A2740;
-  }
 
-  :root{ box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  :root{ color-scheme:light; box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
   html{ scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%; }
   *,*::before,*::after{ box-sizing:inherit; }
+  html{ background:var(--paper); }
   body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.5; }
   button,input,select,textarea{ font:inherit; color:inherit; }
   :focus-visible{ outline:3px solid var(--accent); outline-offset:2px; }
@@ -112,6 +94,7 @@
   .bk .more:hover,.bk .more[aria-expanded="true"]{ background:var(--hover); color:var(--ink); }
   .bk .more[aria-expanded="true"] svg{ transform:rotate(180deg); }
   .bk-bottom{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:1px 0 0 28px; }
+  .tbl.split{ color:var(--warn); font-weight:700; }
   .tbl{ font-size:13.5px; line-height:1.35; color:var(--muted); min-width:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .step{ display:flex; align-items:center; border:1.5px solid var(--brand); border-radius:8px; overflow:hidden; flex:0 0 auto; background:var(--field); }
   .step button{ border:0; background:transparent; width:36px; height:36px; font-size:22px; font-weight:700; line-height:1; cursor:pointer; color:var(--brand); }
@@ -200,6 +183,40 @@
   .closing p{ margin:0; max-width:64ch; }
   .closing small{ color:var(--muted); }
 
+  /* ---------- clear feedback on edits ---------- */
+  .changebar{ position:fixed; bottom:0; left:0; width:100%; padding:12px 22px 14px; background:var(--sheet); border-top:3px solid var(--accent);
+              box-shadow:0 -4px 14px rgba(10,39,64,.14); display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 12px; z-index:30; }
+  body.has-bar .rail{ padding-bottom:120px; }
+  .changebar[hidden]{ display:none; }
+  .changebar.ok{ border-top-color:var(--sea); }
+  .changebar .cb-msg{ font-size:14.5px; font-weight:800; }
+  .changebar.ok .cb-msg{ color:var(--sea); }
+  .changebar .row{ display:flex; gap:8px; }
+  .changebar .cb-hint{ flex-basis:100%; font-size:13px; color:var(--muted); margin-top:-2px; }
+  .bk.edited{ background:var(--hover); box-shadow:inset 4px 0 0 var(--accent); }
+  .bk .edited-note{ display:none; margin:4px 0 0; font-size:13px; font-weight:700; color:var(--warn); }
+  .bk.edited .edited-note{ display:block; }
+  .bk.flash{ animation:flashrow 1.8s ease-out; }
+  @keyframes flashrow{ 0%{ background:var(--accent); } 100%{ background:transparent; } }
+  .draft{ border:2px solid var(--accent); border-radius:8px; padding:12px 14px 14px; margin:10px 0 14px; background:var(--sheet); }
+  .draft h3{ margin:0 0 8px; font-size:16px; font-weight:800; display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .draft h3 small{ font-size:12.5px; font-weight:700; color:var(--warn); }
+  .draft label.chk{ display:flex; gap:8px; align-items:center; font-size:14px; margin:10px 0 0; }
+  .draft .err{ min-height:1.2em; margin:8px 0 0; font-size:13.5px; font-weight:700; color:var(--alert); }
+  .draft .row{ display:flex; gap:8px; margin-top:8px; }
+  /* ---------- dietary needs ---------- */
+  .dc{ display:inline-flex; align-items:center; justify-content:center; min-width:17px; height:17px; padding:0 4px; box-sizing:border-box; border-radius:9px; color:#fff;
+       font-size:10px; font-weight:800; font-style:normal; line-height:1; flex:0 0 auto; }
+  .dc.al{ border-radius:4px; }
+  .diet-line{ display:flex; flex-wrap:wrap; align-items:center; gap:4px 5px; margin:5px 0 0; font-size:12.5px; }
+  .diet-line:empty{ display:none; }
+  .diet-line .dn{ margin-right:5px; font-weight:700; color:var(--ink2); }
+  .dkey{ display:inline-flex; flex-wrap:wrap; align-items:center; gap:6px; }
+  .dkb, .chipx.dk{ display:inline-flex; align-items:center; gap:6px; background:var(--sheet); cursor:pointer; color:var(--ink); font:inherit; }
+  .dkb{ border:1.5px solid var(--rule); border-radius:999px; padding:3px 10px 3px 4px; font-size:13px; }
+  .chipx.dk{ padding-left:5px; line-height:1.2; }
+  .chipx.dk b{ margin-left:4px; line-height:1.2; }
+  .dkb.on, .chipx.dk.on{ border-color:var(--brand); box-shadow:0 0 0 2px var(--brand); }
   @media (max-width:980px){
     .layout{ grid-template-columns:1fr; }
     .rail{ position:static; max-height:none; border-right:0; border-bottom:1px solid var(--rule); }
@@ -212,7 +229,7 @@
   }
 
   @media print{
-    .rail,.btn,.selbar,.plantools,.top .demo-note,details.setup,details.about,.takeaway .tools{ display:none !important; }
+    .rail,.changebar,.draft,.btn,.selbar,.plantools,.dkb,.top .demo-note,details.setup,details.about,.takeaway .tools{ display:none !important; }
     .top{ background:#fff !important; color:#000 !important; padding-bottom:12px; }
     .top::after{ display:none; }
     .layout{ display:block; }
@@ -230,11 +247,11 @@
     <img class="logo" src="data:image/webp;base64,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" alt="The Grand Pier, Weston-super-Mare. Fun since 1904." width="242" height="176">
     <div class="head-text">
       <div class="brand"><span class="by">Prepared by Neto Labs</span></div>
-      <h1>Christmas room and seating planner</h1>
+      <h1>Room and seating planner</h1>
       <p class="lede">Change a guest number and watch how little moves.</p>
     </div>
   </div>
-  <p class="demo-note" id="demoNote"><strong>Demonstration.</strong> The floorplan is a dummy, the companies are invented and the position scores are placeholders.</p>
+  <p class="demo-note" id="demoNote"><strong>Demonstration.</strong> The floorplan is a dummy and the position scores are placeholders.</p>
 </header>
 
 <div class="layout">
@@ -247,7 +264,7 @@
     </div>
 
     <h2>Bookings <small id="guestTotal"></small></h2>
-    <p class="hint">Press + or − beside a company and the plan updates straight away. Point at a company to see its tables. Use the arrow for accessible seating, dietary notes or to remove a booking.</p>
+    <p class="hint">Press + or − beside a company and the plan updates straight away. If you type a number, press Enter or choose Update the plan. Point at a company to see its tables. Use the arrow for accessible seating, dietary notes or to remove a booking.</p>
     <div class="bklist" id="bookings"></div>
     <button type="button" class="btn wide" id="addCo">+ Add a booking</button>
 
@@ -260,6 +277,7 @@
         <div class="problems" id="pasteProblems" role="status"></div>
       </div>
     </details>
+    <div class="changebar" id="changeBar" role="status" aria-live="polite" hidden></div>
   </aside>
 
   <main class="stage">
@@ -272,6 +290,7 @@
           <button type="button" class="btn small" id="addTable">Add a table</button>
           <button type="button" class="btn small" id="tidyBtn">Space the tables evenly</button>
           <button type="button" class="btn small toggle" id="moveBtn" aria-pressed="false" title="Turn on to drag tables around the plan">Move tables</button>
+          <button type="button" class="btn small toggle" id="dietBtn" aria-pressed="true" title="Show allergies and dietary needs on the tables">Dietary needs</button>
         </div>
         <div class="grp">
           <button type="button" class="btn small" id="undoBtn" disabled>Undo</button>
@@ -324,7 +343,7 @@
           <input type="number" id="cap" min="0" step="10">
         </div>
         <label class="chk"><input type="checkbox" id="showScore"> Show how good each table position is</label>
-        <div><button type="button" class="btn small" id="resetNight">Start again with the sample bookings</button></div>
+        <div><button type="button" class="btn small" id="resetNight">Start this room again</button></div>
       </div>
     </details>
 
@@ -335,7 +354,7 @@
         <li><b>The companies are invented.</b> Any resemblance to real businesses is coincidence.</li>
         <li><b>Position scores are placeholders.</b> Distance from the stage and from service doors are guesses. In a real build the events manager ranks the tables and the weights are worked back from that.</li>
         <li><b>Table spacing is automatic.</b> The planner works out the widest comfortable gap at which the tables you need will fit, spreads them evenly, and keeps them clear of fixed rooms and features, columns, doors and exits. When more tables are needed it re spaces the whole room. The spacing limits here are placeholders: 1.5 m between table edges is treated as comfortable, and the planner will go as tight as 1.25 m before it tells you the room is full. Tables also stay at least 1.2 m clear of any door opening.</li>
-        <li><b>The planner runs in your browser.</b> It seats everyone, keeps each company together and close, honours accessible seating and locked tables, and when numbers change it moves as little as it can. The build version would use an exact solver, and could also let two small companies share a table when a room is full.</li>
+        <li><b>The planner runs in your browser.</b> It seats everyone, keeps each company's tables in one connected block, honours accessible seating and locked tables, and when numbers change it moves as little as it can. If a change will not fit around the old plan it first adds a table if the room is short of spares, then plans the night again, and only splits a company when the room genuinely cannot hold it in one block, saying so when it does. The build version would use an exact solver, and could also let two small companies share a table when a room is full.</li>
         <li><b>It does not decide how many people may be in a room.</b> That depends on exits, escape routes, the fire risk assessment and the premises licence. Enter the approved capacity and the planner warns you when a layout goes over it. Every layout needs sign off by a competent person.</li>
         <li><b>Not shown here:</b> planning across several rooms on one night, reading bookings straight from iVvy or the ticketing system, and exact dietary counts for each table. That last one comes from the pre event form.</li>
       </ul>
@@ -655,6 +674,10 @@
              tight: pick.c < comfy - 1e-9, available: pick.pos.length };
   }
 
+  // Spare tables: at least the number the room asks for, or a tenth of the tables needed, whichever is more.
+  // A little slack is what lets every group sit together in one block.
+  function spareTables(room, need) { return Math.max(room.spare == null ? 3 : room.spare, Math.ceil(need * 0.1)); }
+
   // Set out the tables a night needs, plus spares.
   function makeLayout(room, type, tablesWanted, spare) {
     return layoutEven(room, type, tablesWanted + (spare == null ? 3 : spare));
@@ -808,7 +831,13 @@
       };
     });
 
-    if (!companies.length) return { ok: false, kind: 'input', error: 'Add at least one company.' };
+    if (!companies.length) {
+      var prevNames = input.previous ? Object.keys(input.previous) : [];
+      return { ok: true, empty: true, plan: {}, byTable: {}, order: [], companies: [], violations: [],
+        changes: prevNames.length ? { added: [], changed: [], reseated: [], unchanged: [], removed: prevNames } : null,
+        stats: { ms: 0, restarts: 0, replanned: false, rippled: 0, pieces: {}, split: [], guests: 0, tablesUsed: 0, tablesFree: tables.length,
+                 emptySeats: sum(tables.map(function (t) { return t.seats; })), qualityGap: 0, quality: {}, spread: {} } };
+    }
     var problems = [], seenNames = {};
     companies.forEach(function (c) {
       if (c.size < 1) problems.push(c.name + ' needs at least 1 guest.');
@@ -864,6 +893,28 @@
       for (var j = 0; j < T; j++) if (j !== i && dist(a.x, a.y, tables[j].x, tables[j].y) <= R) list.push(j);
       return list;
     });
+    var R2 = pitch * 1.45;
+    var nbc = tables.map(function (a, i) {
+      var list = [];
+      for (var j = 0; j < T; j++) if (j !== i && dist(a.x, a.y, tables[j].x, tables[j].y) <= R2) list.push(j);
+      return list;
+    });
+    // How many separate pieces is a set of tables in? One means a single connected block.
+    function piecesOf(list) {
+      if (list.length <= 1) return list.length;
+      var inSet = {}, seen = {}, comps = 0;
+      list.forEach(function (i) { inSet[i] = true; });
+      list.forEach(function (s) {
+        if (seen[s]) return;
+        comps++; seen[s] = true;
+        var stack = [s];
+        while (stack.length) {
+          var u = stack.pop();
+          nbc[u].forEach(function (v) { if (inSet[v] && !seen[v]) { seen[v] = true; stack.push(v); } });
+        }
+      });
+      return comps;
+    }
     var score = tables.map(function (t) { return t.score == null ? 50 : t.score; });
     var tmean = sum(score) / T;
 
@@ -884,7 +935,7 @@
     }
 
     // One full pass. order: company indices. usePrev: try to keep previous tables.
-    function attempt(order, rng, noise, usePrev, released) {
+    function attempt(order, rng, noise, usePrev, released, strict) {
       var free = [];
       for (var i = 0; i < T; i++) free.push(true);
       var cl = [];
@@ -929,12 +980,17 @@
       }
 
       function growOne(c, cluster) {
-        var ce = centroid(cluster), best = -1, bd = Infinity;
+        var ce = centroid(cluster), best = -1, bd = Infinity, bestAny = -1, bdAny = Infinity, touching = null;
+        if (strict) { touching = {}; cluster.forEach(function (i) { nbc[i].forEach(function (j) { touching[j] = true; }); }); }
         for (var i = 0; i < T; i++) {
           if (!free[i]) continue;
           var d = dist(tables[i].x, tables[i].y, ce[0], ce[1]) + 0.15 * freeNeighbours(i) + noise * rng() * 0.6;
+          if (d < bdAny) { bdAny = d; bestAny = i; }
+          if (touching && !touching[i]) continue;
           if (d < bd) { bd = d; best = i; }
         }
+        // prefer a table that touches the group; if none is free, take the nearest and let the repair step tidy up afterwards
+        if (best < 0) best = bestAny;
         if (best < 0) return false;
         cluster.push(best); free[best] = false;
         return true;
@@ -1021,8 +1077,67 @@
         if (!lockIdx[cv].length && pairMax(cl[cv]) > maxSpan(cl[cv].length, pitch) + 1e-6) return null;
       }
 
+      // Greedy placement can leave a stray table or two. Swap each stray with a table beside the main block,
+      // but only when the swap reduces the number of separate pieces overall.
+      (function repairPieces() {
+        var owner = [];
+        for (var i0 = 0; i0 < T; i0++) owner.push(-1);
+        for (var c0 = 0; c0 < C; c0++) cl[c0].forEach(function (i) { owner[i] = c0; });
+        function locked(i) { var o = owner[i]; return o >= 0 && lockIdx[o].indexOf(i) >= 0; }
+        function accOk(x) { return !companies[x].accessible || cl[x].some(function (i) { return tables[i].accessible; }); }
+        function components(list) {
+          var inSet = {}, seen = {}, out = [];
+          list.forEach(function (i) { inSet[i] = true; });
+          list.forEach(function (s) {
+            if (seen[s]) return;
+            var comp = [], stack = [s]; seen[s] = true;
+            while (stack.length) { var u = stack.pop(); comp.push(u); nbc[u].forEach(function (v) { if (inSet[v] && !seen[v]) { seen[v] = true; stack.push(v); } }); }
+            out.push(comp);
+          });
+          return out;
+        }
+        var guard = 0, improved = true;
+        while (improved && guard++ < 60) {
+          improved = false;
+          for (var a = 0; a < C && !improved; a++) {
+            if (lockIdx[a].length || cl[a].length < 2) continue;
+            var comps = components(cl[a]);
+            if (comps.length < 2) continue;
+            comps.sort(function (x, y) { return y.length - x.length; });
+            var cand = {};
+            comps[0].forEach(function (m) { nbc[m].forEach(function (u) { if (owner[u] !== a) cand[u] = true; }); });
+            var strays = [];
+            for (var q = 1; q < comps.length; q++) comps[q].forEach(function (t) { strays.push(t); });
+            var targets = Object.keys(cand).map(Number);
+            for (var si = 0; si < strays.length && !improved; si++) {
+              var t = strays[si];
+              targets.sort(function (x, y) { return dist(tables[x].x, tables[x].y, tables[t].x, tables[t].y) - dist(tables[y].x, tables[y].y, tables[t].x, tables[t].y); });
+              for (var ui = 0; ui < targets.length; ui++) {
+                var u = targets[ui], b = owner[u];
+                if (locked(u)) continue;
+                var before = piecesOf(cl[a]) + (b >= 0 ? piecesOf(cl[b]) : 0);
+                var ia = cl[a].indexOf(t); cl[a][ia] = u;
+                var ib = -1; if (b >= 0) { ib = cl[b].indexOf(u); cl[b][ib] = t; }
+                var after = piecesOf(cl[a]) + (b >= 0 ? piecesOf(cl[b]) : 0);
+                if (after < before && accOk(a) && (b < 0 || accOk(b))) { owner[u] = a; owner[t] = b; improved = true; break; }
+                cl[a][ia] = t; if (b >= 0) cl[b][ib] = u;
+              }
+            }
+          }
+        }
+        for (var f0 = 0; f0 < T; f0++) free[f0] = owner[f0] < 0;
+      })();
+
+      var extraPieces = 0;
+      for (var cq = 0; cq < C; cq++) {
+        if (lockIdx[cq].length) continue;
+        var pcq = piecesOf(cl[cq]);
+        if (pcq > 1) extraPieces += pcq - 1;
+      }
+      if (strict && extraPieces > 0) return null;
+
       // objective
-      var tot = 0, means = [];
+      var tot = 150 * extraPieces, means = [];
       for (var c3 = 0; c3 < C; c3++) {
         tot += W_SPREAD * pairMax(cl[c3]);
         var m = 0; cl[c3].forEach(function (i) { m += score[i]; }); means.push(m / cl[c3].length);
@@ -1048,7 +1163,7 @@
     var hasPrev = prevIdx.some(function (p) { return p.length > 0; });
     var best = null, restarts = 0, replanned = false;
 
-    function search(usePrev, released, budget, max) {
+    function search(usePrev, released, budget, max, strict) {
       var start = now(), BUDGET = budget || 450, MAX = max || 60, found = null;
       for (var rs = 0; rs < MAX && (now() - start) < BUDGET; rs++) {
         var rng = mulberry32(1000 + rs);
@@ -1057,7 +1172,7 @@
           ord = baseOrder.map(function (c) { return [c, need[c] + (rng() - 0.5) * 1.6]; })
             .sort(function (a, b) { return b[1] - a[1]; }).map(function (p) { return p[0]; });
         }
-        var res = attempt(ord, rng, rs === 0 ? 0 : 1, usePrev, released);
+        var res = attempt(ord, rng, rs === 0 ? 0 : 1, usePrev, released, strict);
         restarts++;
         if (res && (!found || res.cost < found.cost)) found = res;
       }
@@ -1065,66 +1180,80 @@
     }
 
     var rippled = 0;
-    if (hasPrev) {
-      best = attempt(baseOrder, mulberry32(7), 0, true);
-      restarts = 1;
-      if (!best) best = search(true);
-      if (!best) {
-        // The room is too tight to adjust in place. Shift along only the
-        // companies nearest the free tables, as few as it takes.
-        var usedPrev = {};
-        prevIdx.forEach(function (list) { list.forEach(function (i) { usedPrev[i] = true; }); });
-        var freeIdx = [];
-        for (var fi = 0; fi < T; fi++) if (!usedPrev[fi]) freeIdx.push(fi);
-        var withPrev = [];
-        for (var wc = 0; wc < C; wc++) if (prevIdx[wc].length && !lockIdx[wc].length) withPrev.push(wc);
-        var dFree = {};
-        withPrev.forEach(function (wc) {
-          var m = Infinity;
-          prevIdx[wc].forEach(function (i) { freeIdx.forEach(function (f) { m = Math.min(m, dist(tables[i].x, tables[i].y, tables[f].x, tables[f].y)); }); });
-          dFree[wc] = m;
-        });
-        // Start with whoever needs more room, then the neighbours between them and the nearest free table.
-        var affected = [];
-        for (var ac = 0; ac < C; ac++) if (prevIdx[ac].length && need[ac] > prevIdx[ac].length) affected.push(ac);
-        var pathD = {};
-        withPrev.forEach(function (wc) { pathD[wc] = Infinity; });
-        affected.forEach(function (x) {
-          var cx = centroid(prevIdx[x]), fb = -1, fd = Infinity;
-          freeIdx.forEach(function (f) { var d = dist(tables[f].x, tables[f].y, cx[0], cx[1]); if (d < fd) { fd = d; fb = f; } });
-          if (fb < 0) return;
-          withPrev.forEach(function (wc) {
-            if (wc === x) return;
-            prevIdx[wc].forEach(function (i) { pathD[wc] = Math.min(pathD[wc], segDist(tables[i].x, tables[i].y, cx[0], cx[1], tables[fb].x, tables[fb].y)); });
-          });
-        });
-        var isAff = {}; affected.forEach(function (x) { isAff[x] = true; });
-        var key = function (wc) { return isAff[wc] ? -1 : Math.min(pathD[wc], dFree[wc]); };
-        withPrev.sort(function (a, b) { return key(a) - key(b) || dFree[a] - dFree[b] || a - b; });
-        var limit = input.allowFullReplan ? withPrev.length : Math.max(3, Math.floor(C / 3));
-        for (var K = 1; K <= Math.min(limit, withPrev.length) && !best; K++) {
-          var rel = {};
-          withPrev.slice(0, K).forEach(function (wc) { rel[wc] = true; });
-          best = search(true, rel, 140, 14);
-          if (best) { rippled = K; replanned = K >= withPrev.length; }
-        }
-      }
-      if (!best) {
-        return { ok: false, kind: 'stuck', suggestAdd: 1,
-          error: 'The room is full and the free tables are not together, so this cannot be fitted without moving a lot of other companies.' };
-      }
-    } else {
-      best = search(false);
-    }
     var anyLock = lockIdx.some(function (l) { return l.length > 0; });
+
+    function solve(strict) {
+      var found = null;
+      if (hasPrev) {
+        found = attempt(baseOrder, mulberry32(7), 0, true, null, strict);
+        restarts = 1;
+        if (!found) found = search(true, null, null, null, strict);
+        if (!found) {
+          // The old plan cannot simply be adjusted. Shift along only the companies that are in the way, as few as it takes.
+          var usedPrev = {};
+          prevIdx.forEach(function (list) { list.forEach(function (i) { usedPrev[i] = true; }); });
+          var freeIdx = [];
+          for (var fi = 0; fi < T; fi++) if (!usedPrev[fi]) freeIdx.push(fi);
+          var withPrev = [];
+          for (var wc = 0; wc < C; wc++) if (prevIdx[wc].length && !lockIdx[wc].length) withPrev.push(wc);
+          var dFree = {};
+          withPrev.forEach(function (wc) {
+            var m = Infinity;
+            prevIdx[wc].forEach(function (i) { freeIdx.forEach(function (f) { m = Math.min(m, dist(tables[i].x, tables[i].y, tables[f].x, tables[f].y)); }); });
+            dFree[wc] = m;
+          });
+          // Start with whoever needs more room, or is already split, then the neighbours between them and the nearest free table.
+          var affected = [];
+          for (var ac = 0; ac < C; ac++) {
+            if (!prevIdx[ac].length) continue;
+            if (need[ac] > prevIdx[ac].length || (!lockIdx[ac].length && piecesOf(prevIdx[ac]) > 1)) affected.push(ac);
+          }
+          var pathD = {};
+          withPrev.forEach(function (wc) { pathD[wc] = Infinity; });
+          affected.forEach(function (x) {
+            var cx = centroid(prevIdx[x]), fb = -1, fd = Infinity;
+            freeIdx.forEach(function (f) { var d = dist(tables[f].x, tables[f].y, cx[0], cx[1]); if (d < fd) { fd = d; fb = f; } });
+            if (fb < 0) return;
+            withPrev.forEach(function (wc) {
+              if (wc === x) return;
+              prevIdx[wc].forEach(function (i) { pathD[wc] = Math.min(pathD[wc], segDist(tables[i].x, tables[i].y, cx[0], cx[1], tables[fb].x, tables[fb].y)); });
+            });
+          });
+          var isAff = {}; affected.forEach(function (x) { isAff[x] = true; });
+          var key = function (wc) { return isAff[wc] ? -1 : Math.min(pathD[wc], dFree[wc]); };
+          withPrev.sort(function (a, b) { return key(a) - key(b) || dFree[a] - dFree[b] || a - b; });
+          var limit = input.allowFullReplan ? withPrev.length : Math.max(3, Math.floor(C / 3));
+          var maxK = Math.min(limit, withPrev.length), ks = [];
+          for (var kk = 1; kk <= maxK; kk += (kk < 4 ? 1 : 2)) ks.push(kk);
+          if (ks[ks.length - 1] !== maxK) ks.push(maxK);
+          for (var ki = 0; ki < ks.length && !found; ki++) {
+            var K = ks[ki], rel = {};
+            withPrev.slice(0, K).forEach(function (wc) { rel[wc] = true; });
+            found = strict ? search(true, rel, 90, 10, strict) : search(true, rel, 200, 24, strict);
+            if (found) { rippled = K; replanned = K >= withPrev.length; }
+          }
+        }
+      } else {
+        found = search(false, null, null, null, strict);
+      }
+      return found;
+    }
+
+    best = solve(true);
+    if (!best && input.allowFragments) { rippled = 0; replanned = false; best = solve(false); }
     if (!best) {
-      return { ok: false, kind: 'place', suggestAdd: anyLock ? 0 : 1,
-        error: anyLock
-          ? 'No tidy plan found with these tables locked. Unlock one and try again.'
-          : 'The room is nearly full and the free tables are not together, so every company cannot sit with its own group. Add a table and plan again.' };
+      if (anyLock && input.allowFragments) return { ok: false, kind: 'place', suggestAdd: 0, error: 'No tidy plan found with these tables locked. Unlock one and try again.' };
+      return { ok: false, kind: 'stuck', suggestAdd: anyLock ? 0 : 1,
+        error: 'The room is full enough that every group cannot sit together in one block without moving a lot of other companies.' };
     }
 
     var cl = best.cl;
+    var pieceCounts = {}, splitNames = [];
+    for (var cp2 = 0; cp2 < C; cp2++) {
+      var pc2 = piecesOf(cl[cp2]);
+      pieceCounts[companies[cp2].name] = pc2;
+      if (pc2 > 1 && !lockIdx[cp2].length) splitNames.push(companies[cp2].name);
+    }
 
     function meanOf(list) { var m = 0; list.forEach(function (i) { m += score[i]; }); return m / list.length; }
 
@@ -1203,6 +1332,8 @@
         restarts: restarts,
         replanned: replanned,
         rippled: rippled,
+        pieces: pieceCounts,
+        split: splitNames,
         guests: guests,
         tablesUsed: Object.keys(byTable).length,
         tablesFree: T - Object.keys(byTable).length,
@@ -1287,6 +1418,51 @@
     return out;
   }
 
+  // ---- dietary needs as a few clear kinds, so they can be marked on the plan.
+  // Free text such as "4 vegetarian, 2 gluten free, nut allergy" becomes [{key, short, name, count, allergy}], allergies first.
+  var DIET_KINDS = [
+    { key: 'nut',        short: 'N',  name: 'Nut allergy',       allergy: true,  test: /nut|almond|cashew|pistachio|walnut/ },
+    { key: 'shellfish',  short: 'S',  name: 'Shellfish allergy', allergy: true,  test: /shellfish|crustacean|prawn|crab|lobster/ },
+    { key: 'egg',        short: 'E',  name: 'Egg allergy',       allergy: true,  test: /\begg/ },
+    { key: 'dairy',      short: 'DF', name: 'Dairy free',        allergy: false, test: /dairy|lactose|milk/ },
+    { key: 'allergy',    short: 'A',  name: 'Other allergy',     allergy: true,  test: /allerg|intoleran|anaphyla/ },
+    { key: 'gluten',     short: 'GF', name: 'Gluten free',       allergy: false, test: /gluten|coeliac|celiac/ },
+    { key: 'vegan',      short: 'VG', name: 'Vegan',             allergy: false, test: /vegan/ },
+    { key: 'vegetarian', short: 'V',  name: 'Vegetarian',        allergy: false, test: /vegetarian|veggie|\bveg\b/ },
+    { key: 'halal',      short: 'H',  name: 'Halal',             allergy: false, test: /halal/ },
+    { key: 'kosher',     short: 'K',  name: 'Kosher',            allergy: false, test: /kosher/ }
+  ];
+  function classifyDiet(label) {
+    for (var i = 0; i < DIET_KINDS.length; i++) {
+      if (DIET_KINDS[i].test.test(label)) {
+        var k = DIET_KINDS[i];
+        return { key: k.key, short: k.short, name: k.name, allergy: k.allergy || /allerg|anaphyla/.test(label), order: i };
+      }
+    }
+    return { key: 'other:' + label, short: '+', name: label.charAt(0).toUpperCase() + label.slice(1), allergy: false, order: 90 };
+  }
+  function addKinds(acc, str) {
+    String(str || '').toLowerCase().split(/[,;\n+]+|\band\b/).forEach(function (part) {
+      part = part.trim(); if (!part) return;
+      var count = 1, label = part, m = part.match(/^(\d+)\s*x?\s*(.+)$/);
+      if (m) { count = parseInt(m[1], 10); label = m[2]; }
+      else { m = part.match(/^(.+?)\s*[x\u00d7]\s*(\d+)$/); if (m) { label = m[1]; count = parseInt(m[2], 10); } }
+      label = label.replace(/\s+/g, ' ').trim();
+      if (!label || !/[a-z]/.test(label) || !(count > 0)) return;
+      var k = classifyDiet(label);
+      if (!acc[k.key]) acc[k.key] = { key: k.key, short: k.short, name: k.name, allergy: false, count: 0, order: k.order };
+      acc[k.key].count += count;
+      acc[k.key].allergy = acc[k.key].allergy || k.allergy;
+    });
+  }
+  function sortKinds(acc) {
+    return Object.keys(acc).map(function (k) { return acc[k]; }).sort(function (a, b) {
+      return (b.allergy - a.allergy) || (a.order - b.order) || (b.count - a.count) || (a.name < b.name ? -1 : 1);
+    });
+  }
+  function dietaryKinds(str) { var acc = {}; addKinds(acc, str); return sortKinds(acc); }
+  function kitchenKinds(companies) { var acc = {}; companies.forEach(function (c) { addKinds(acc, c.dietary); }); return sortKinds(acc); }
+
   function kitchenTotals(companies) {
     var tot = {};
     companies.forEach(function (c) {
@@ -1352,6 +1528,14 @@
       { name: 'Larkhill Accountants', size: 16, accessible: false, dietary: '1 halal' },
       { name: 'Fernbank Pharmacy', size: 26, accessible: false, dietary: '' },
       { name: 'Ashgrove Vets', size: 11, accessible: true, dietary: '' }
+    ],
+    regency_suite: [
+      { name: 'Quayside Marine', size: 40, accessible: true, dietary: '4 vegetarian, 1 coeliac' },
+      { name: 'Millbrook Surveyors', size: 24, accessible: false, dietary: '2 vegan' },
+      { name: 'Hartley Physiotherapy', size: 18, accessible: false, dietary: '' },
+      { name: 'Wren and Co Interiors', size: 14, accessible: false, dietary: '1 nut allergy' },
+      { name: 'Combe Valley Nurseries', size: 12, accessible: false, dietary: '' },
+      { name: 'Tidemark Bakery', size: 9, accessible: false, dietary: '1 vegetarian' }
     ]
   };
 
@@ -1661,14 +1845,7 @@
       { name: 'Fernbank Pharmacy', size: 40, accessible: false, dietary: '' },
       { name: 'Ashgrove Vets', size: 16, accessible: true, dietary: '' }
     ],
-    regency_suite: [
-      { name: 'Quayside Marine', size: 40, accessible: true, dietary: '4 vegetarian, 1 coeliac' },
-      { name: 'Millbrook Surveyors', size: 24, accessible: false, dietary: '2 vegan' },
-      { name: 'Hartley Physiotherapy', size: 18, accessible: false, dietary: '' },
-      { name: 'Wren and Co Interiors', size: 14, accessible: false, dietary: '1 nut allergy' },
-      { name: 'Combe Valley Nurseries', size: 12, accessible: false, dietary: '' },
-      { name: 'Tidemark Bakery', size: 9, accessible: false, dietary: '1 vegetarian' }
-    ]
+    regency_suite: [    ]
   };
 
   var api = {
@@ -1678,7 +1855,7 @@
     analyseLayout: analyseLayout, allocate: allocate, verify: verify,
     parseBookings: parseBookings, parseDietary: parseDietary, kitchenTotals: kitchenTotals,
     roomPoly: roomPoly, bboxOf: bboxOf, pointInPoly: pointInPoly, polyDist: polyDist, polyArea: polyArea, edgeLengths: edgeLengths, fitsPoly: fitsPoly,
-    normaliseRoom: normaliseRoom, capacityAt: capacityAt, segDist: segDist,
+    normaliseRoom: normaliseRoom, capacityAt: capacityAt, spareTables: spareTables, dietaryKinds: dietaryKinds, kitchenKinds: kitchenKinds, segDist: segDist,
     toCSV: toCSV, FIXTURE_ROOMS: FIXTURE_ROOMS, FIXTURE_NIGHTS: FIXTURE_NIGHTS, SAMPLE_ROOMS: SAMPLE_ROOMS, SAMPLE_NIGHTS: SAMPLE_NIGHTS, distribute: distribute
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
@@ -1715,9 +1892,11 @@
   function freshNight(k, keepCompanies) {
     var room = clone(roomDefs[k]);
     var companies = keepCompanies ? clone(keepCompanies) : clone(P.SAMPLE_NIGHTS[k] || P.SAMPLE_NIGHTS.regency_suite);
-    var lay = P.makeLayout(room, room.tableType, P.tablesNeededFor(companies, room.tableType), room.spare);
+    var needNow = P.tablesNeededFor(companies, room.tableType);
+    var lay = companies.length ? P.makeLayout(room, room.tableType, needNow, P.spareTables(room, needNow))
+                               : { tables: [], clearance: null, pattern: null, tight: false, ok: true, capacity: null };
     return { room: room, companies: companies, tables: lay.tables, layout: layoutInfo(lay), alloc: null, locks: {}, stale: false, marks: null,
-             sel: null, hl: null, undo: [], showScore: false, edit: false, banner: null, snap: clone(companies), touched: false };
+             sel: null, hl: null, undo: [], showScore: false, edit: false, banner: null, snap: clone(companies), touched: false, pending: {}, draft: null, showDiet: true, dietFilter: null };
   }
   function cur() { if (!nights[key]) { nights[key] = freshNight(key); } return nights[key]; }
 
@@ -1737,15 +1916,53 @@
     n.companies = clone(s.companies); n.snap = clone(s.companies);
     n.tables = s.tables; n.alloc = s.alloc; n.locks = s.locks; n.layout = s.layout; n.stale = s.stale;
     if (s.rs) { n.room.tableType = s.rs.tableType; n.room.style = s.rs.style; n.room.approvedCapacity = s.rs.approvedCapacity; n.room.spare = s.rs.spare; }
-    n.marks = null; n.sel = null; n.hover = null; n.hl = null; openDetail = -1;
+    n.marks = null; n.sel = null; n.hover = null; n.hl = null; openDetail = -1; n.pending = {};
     n.banner = { kind: '', title: 'Undone.', text: 'The plan is back as it was before your last change.' };
     renderRoomControls(); renderBookings(); renderLight();
+    notify('Undone. The plan is back as it was.', { noUndo: true });
   }
   function updateTools() {
     var n = cur();
     $('#undoBtn').disabled = !n.undo.length;
     $('#unlockAll').disabled = !Object.keys(n.locks).length;
     $('#moveBtn').setAttribute('aria-pressed', n.edit ? 'true' : 'false');
+    $('#dietBtn').setAttribute('aria-pressed', n.showDiet ? 'true' : 'false');
+  }
+  // ---- dietary needs on the plan. A mark means someone in that group has the need.
+  var DIET_COL = { dairy: '#B23C00', gluten: '#8F5200', vegan: '#00695C', vegetarian: '#2E7D32', halal: '#5E35B1', kosher: '#1565C0' };
+  function dietColour(k) { return k.allergy ? '#B71C1C' : (DIET_COL[k.key] || '#55616B'); }
+  function dietChip(k) { return '<span class="dc ' + (k.allergy ? 'al' : 'pf') + '" style="background:' + dietColour(k) + '" aria-hidden="true">' + esc(k.short) + '</span>'; }
+  function dietByCompany(n) {
+    var by = {};
+    n.companies.forEach(function (c) { var ks = P.dietaryKinds(c.dietary); if (ks.length) by[c.name] = ks; });
+    return by;
+  }
+  // a filter only counts while somebody still has that need
+  function activeDietFilter(n, by) {
+    if (!n.showDiet || !n.dietFilter) return null;
+    for (var nm in by) if (by[nm].some(function (k) { return k.key === n.dietFilter; })) return n.dietFilter;
+    return null;
+  }
+  function roundRectPath(ctx, x, y, w, hh, r) {
+    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.arcTo(x + w, y, x + w, y + r, r); ctx.lineTo(x + w, y + hh - r); ctx.arcTo(x + w, y + hh, x + w - r, y + hh, r);
+    ctx.lineTo(x + r, y + hh); ctx.arcTo(x, y + hh, x, y + hh - r, r); ctx.lineTo(x, y + r); ctx.arcTo(x, y, x + r, y, r); ctx.closePath();
+  }
+  // Allergies are red squares, everything else a coloured circle, so they never depend on colour alone.
+  function drawDietChips(ctx, px, py, tr, kinds) {
+    var cr = Math.max(3.8, Math.min(6.8, tr * 0.32));
+    var shown = kinds.length > 3 ? kinds.slice(0, 2).concat([{ key: 'more', short: '+', allergy: false }]) : kinds;
+    var gap = cr * 0.35, total = shown.length * 2 * cr + (shown.length - 1) * gap;
+    var x0 = px - total / 2 + cr, y = py + tr * (tr >= 15 ? 0.46 : 0.52);
+    shown.forEach(function (k, i) {
+      var cx = x0 + i * (2 * cr + gap);
+      ctx.beginPath();
+      if (k.allergy) roundRectPath(ctx, cx - cr, y - cr, 2 * cr, 2 * cr, cr * 0.38); else ctx.arc(cx, y, cr, 0, Math.PI * 2);
+      ctx.fillStyle = k.key === 'more' ? '#55616B' : dietColour(k); ctx.fill();
+      ctx.lineWidth = 1.1; ctx.strokeStyle = '#FFFFFF'; ctx.stroke();
+      ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.font = '800 ' + (k.short.length > 1 ? cr * 0.98 : cr * 1.2) + 'px Nunito, sans-serif';
+      ctx.fillText(k.short, cx, y + 0.4);
+    });
   }
   function companyIndex(n, name) { return n.alloc ? n.alloc.order.indexOf(name) : -1; }
   function tableOwner(n, id) { return n.alloc && n.alloc.byTable[id] ? n.alloc.byTable[id][0] : null; }
@@ -1917,6 +2134,8 @@
     var showScore = n.showScore;
     var focus = focusName(n);
     var manyMoved = tooManyMoved(n);
+    var dietBy = dietByCompany(n), dietF = activeDietFilter(n, dietBy);
+    window.__lastDraw = { chips: {}, dimmed: {} };
 
     n.tables.forEach(function (t, i) {
       var owner = tableOwner(n, t.id);
@@ -1924,7 +2143,9 @@
       var seated = owner ? owner.seated : 0;
       var ci = ownerName ? companyIndex(n, ownerName) : -1;
       var colour = ci >= 0 ? PALETTE[ci % PALETTE.length] : th.table;
-      var dim = focus && ownerName !== focus;
+      var kinds = (n.showDiet && ownerName && dietBy[ownerName]) || null;
+      var dimDiet = !focus && dietF && !(kinds && kinds.some(function (k) { return k.key === dietF; }));
+      var dim = (focus && ownerName !== focus) || dimDiet;
       var px = X(t.x), py = Y(t.y), tr = (t.d / 2) * sc;
       ctx.save();
       if (dim) ctx.globalAlpha = 0.28;
@@ -1953,8 +2174,11 @@
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.font = '700 ' + Math.max(9, Math.min(13, tr * 0.5)) + 'px Nunito, sans-serif';
       var label = showScore ? String(Math.round(t.score)) : String(t.id);
-      var hasName = !showScore && ownerName && tr > 17;
-      ctx.fillText(label, px, py - (hasName ? 5 : 0));
+      var showChips = !showScore && kinds && tr >= 11;
+      var hasName = !showScore && ownerName && tr > 17 && !showChips;
+      ctx.fillText(label, px, py - (showChips ? tr * 0.3 : (hasName ? 5 : 0)));
+      if (showChips) { drawDietChips(ctx, px, py, tr, kinds); window.__lastDraw.chips[t.id] = kinds.map(function (k) { return k.short; }); }
+      if (dim) window.__lastDraw.dimmed[t.id] = true;
       if (hasName) {
         ctx.font = '500 ' + Math.max(7.5, Math.min(9.5, tr * 0.33)) + 'px Nunito, sans-serif';
         var nm = ownerName.split(' ')[0]; if (nm.length > 9) nm = nm.slice(0, 8) + '.';
@@ -2065,16 +2289,109 @@
       (r.dummy ? 'Dummy floorplan. ' : (r.source ? 'Traced from ' + r.source + (r.verified ? ', and checked. ' : '. It is a stand in for the real hall and has not been checked against it. ') : (r.verified ? 'Drawn from the architect\'s plan and checked. ' : 'Drawn from the architect\'s plan, not yet checked. '))) +
       'This is not a capacity determination: every layout needs sign off by a competent person against the fire risk assessment and the premises licence.';
     $('#demoNote').innerHTML = '<strong>Demonstration.</strong> ' + (r.dummy
-      ? 'The floorplan is a dummy, the companies are invented and the position scores are placeholders.'
+      ? 'The floorplan is a dummy and the position scores are placeholders.'
       : (r.source ? 'The floorplan is traced from a demonstration drawing, not the real Great Hall. The bookings are samples and the position scores are placeholders.'
                   : 'The room is drawn from the real plan. The bookings are samples and the position scores are placeholders.'));
   }
 
   var CHEVRON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+  // ---- clear feedback: edits wait until confirmed, new bookings are a small form, and every update is confirmed
+  var toast = null, toastTimer = null;
+  function pendingCount(n) { return Object.keys(n.pending || {}).length; }
+  function notify(msg, opts) {
+    toast = { msg: msg, undo: !(opts && opts.noUndo), n: cur() };
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast = null; renderChangeBar(); }, 9000);
+    renderChangeBar();
+  }
+  function renderChangeBar() {
+    var n = cur(), bar = $('#changeBar'), pc = pendingCount(n);
+    if (pc) {
+      bar.hidden = false; bar.className = 'changebar';
+      bar.innerHTML = '<div class="cb-msg">' + pc + ' change' + (pc > 1 ? 's' : '') + ' not applied yet</div>' +
+        '<div class="row"><button type="button" class="btn solid small" id="applyBtn">Update the plan</button><button type="button" class="btn small" id="discardBtn">Discard</button></div>' +
+        '<div class="cb-hint">Press Enter, or choose Update the plan, to seat everyone again.</div>';
+    } else if (toast && toast.n === n) {
+      bar.hidden = false; bar.className = 'changebar ok';
+      bar.innerHTML = '<div class="cb-msg">&#10003; ' + esc(toast.msg) + '</div><div class="row">' +
+        (toast.undo && n.undo.length ? '<button type="button" class="btn small" id="cbUndo">Undo</button>' : '') +
+        '<button type="button" class="btn small" id="cbView">View the plan</button></div>';
+    } else { bar.hidden = true; bar.className = 'changebar'; bar.innerHTML = ''; }
+    document.body.classList.toggle('has-bar', !bar.hidden);
+    if (!bar.hidden) placeBar();
+  }
+  // the bookings panel is only ever as tall as the part of the window it can be seen in, so nothing sits below the fold or behind the bar
+  function fitRail() {
+    var rail = $('.rail'); if (!rail) return;
+    if (window.innerWidth <= 980) { rail.style.maxHeight = ''; return; }
+    var top = Math.max(0, rail.getBoundingClientRect().top);
+    rail.style.maxHeight = Math.max(260, window.innerHeight - top) + 'px';
+  }
+  window.addEventListener('scroll', fitRail, { passive: true });
+  window.addEventListener('resize', fitRail);
+  window.addEventListener('load', fitRail);
+  if (window.ResizeObserver) new ResizeObserver(fitRail).observe($('.top'));
+  // the bar is pinned to the bottom of the window, as wide as the bookings column
+  function placeBar() {
+    var r = $('.rail').getBoundingClientRect(), bar = $('#changeBar');
+    bar.style.left = Math.max(0, r.left) + 'px'; bar.style.width = Math.min(r.width, window.innerWidth) + 'px';
+  }
+  window.addEventListener('resize', function () { if (!$('#changeBar').hidden) placeBar(); });
+  function applyPending() {
+    var n = cur(); if (!pendingCount(n)) return;
+    clearTimeout(planTimer); planTimer = null;
+    act(function () { plan(); });
+  }
+  function discardPending() {
+    var n = cur(); if (!pendingCount(n)) return;
+    n.companies = clone(n.snap); n.pending = {}; openDetail = -1;
+    renderBookings(); renderLight();
+    notify('Changes discarded.', { noUndo: true });
+  }
+
+  function draftHtml(n) {
+    var d = n.draft; if (!d) return '';
+    return '<div class="draft" id="draft"><h3>New booking <small>Not in the plan yet</small></h3>' +
+      '<label class="fld" for="dName">Company or group name</label><input type="text" id="dName" value="' + esc(d.name) + '" autocomplete="off">' +
+      '<label class="fld" for="dSize" style="margin-top:8px">Guests</label><input type="number" id="dSize" min="1" max="400" value="' + esc(String(d.size)) + '">' +
+      '<label class="chk"><input type="checkbox" id="dAcc"' + (d.acc ? ' checked' : '') + '> Needs accessible seating</label>' +
+      '<label class="fld" for="dDiet" style="margin-top:8px">Dietary notes (optional)</label><input type="text" id="dDiet" value="' + esc(d.diet) + '" placeholder="e.g. 3 vegetarian, 1 vegan" autocomplete="off">' +
+      '<p class="err" id="dErr" role="alert">' + esc(d.err || '') + '</p>' +
+      '<div class="row"><button type="button" class="btn solid" id="dAdd">Add to the plan</button><button type="button" class="btn" id="dCancel">Cancel</button></div></div>';
+  }
+  function openDraft() {
+    var n = cur();
+    if (!n.draft) {
+      var k = n.companies.length + 1, name = 'New booking ' + k;
+      while (n.companies.some(function (c) { return c.name === name; })) name = 'New booking ' + (++k);
+      n.draft = { name: name, size: 20, acc: false, diet: '', err: '' };
+      renderBookings();
+    }
+    var f = $('#dName'); if (f) { f.scrollIntoView({ block: 'nearest' }); f.focus(); f.select(); }
+  }
+  function cancelDraft() { cur().draft = null; renderBookings(); }
+  function addDraft() {
+    var n = cur(), d = n.draft; if (!d) return;
+    var name = String(d.name).trim(), size = parseInt(d.size, 10), err = '', focusId = '';
+    if (!name) { err = 'Enter a name for this booking.'; focusId = 'dName'; }
+    else if (n.companies.some(function (c) { return c.name === name; })) { err = 'There is already a booking called "' + name + '". Use a different name.'; focusId = 'dName'; }
+    else if (!(size >= 1 && size <= 400)) { err = 'Enter a number of guests between 1 and 400.'; focusId = 'dSize'; }
+    if (err) { d.err = err; $('#dErr').textContent = err; var bad = $('#' + focusId); if (bad) bad.focus(); return; }
+    clearTimeout(planTimer); planTimer = null;
+    act(function () {
+      n.companies.push({ name: name, size: size, accessible: !!d.acc, dietary: String(d.diet || '').trim() });
+      n.draft = null; openDetail = -1;
+      renderBookings();
+      plan();
+    });
+    var rows = $$('.bk'), last = rows[rows.length - 1];
+    if (last) { last.scrollIntoView({ block: 'nearest' }); last.classList.add('flash'); setTimeout(function () { last.classList.remove('flash'); }, 1900); }
+  }
+
   function renderBookings() {
     var n = cur(), box = $('#bookings');
-    box.innerHTML = n.companies.map(function (c, i) {
+    var rowsHtml = n.companies.length ? n.companies.map(function (c, i) {
       var open = openDetail === i;
       return '<div class="bk" data-i="' + i + '">' +
         '<div class="bk-top">' +
@@ -2088,14 +2405,18 @@
             '<input type="number" class="f-size" min="1" value="' + esc(c.size) + '" aria-label="Guests for ' + esc(c.name) + '">' +
             '<button type="button" class="plus" aria-label="One more guest for ' + esc(c.name) + '">+</button></div>' +
         '</div>' +
+        '<div class="diet-line"></div>' +
+        '<p class="edited-note">Not applied yet. Press Enter to update the plan.</p>' +
         '<div class="detail"' + (open ? '' : ' hidden') + '>' +
           '<label class="chk"><input type="checkbox" class="f-acc"' + (c.accessible ? ' checked' : '') + '> Needs accessible seating</label>' +
           '<input type="text" class="f-diet" value="' + esc(c.dietary) + '" placeholder="Dietary notes, e.g. 3 vegetarian, 1 vegan" aria-label="Dietary notes">' +
           '<button type="button" class="rm">Remove this booking</button>' +
         '</div></div>';
-    }).join('');
+    }).join('') : '<p class="hint" style="margin:10px 0 14px">No bookings yet. Add one below.</p>';
+    box.innerHTML = rowsHtml + draftHtml(n);
     $('#guestTotal').textContent = guestsOf(n) + ' guests';
     refreshRows();
+    renderChangeBar();
   }
 
   // colours, the tables each company has, and which row is being looked at
@@ -2108,8 +2429,14 @@
       var t = $('.tbl', row);
       var txt = rows ? (rows.length > 1 ? 'Tables ' : 'Table ') + ids(rows) + (c.accessible ? ' (accessible)' : '')
                      : (c.accessible ? 'Accessible, not seated yet' : 'Not seated yet');
-      t.textContent = txt; t.title = txt;
+      var pieces = rows && n.alloc.stats.pieces ? n.alloc.stats.pieces[c.name] : 1;
+      if (pieces > 1) txt += ' (in ' + pieces + ' pieces)';
+      t.textContent = txt; t.title = txt; t.classList.toggle('split', pieces > 1);
       row.classList.toggle('hot', !!f && f === c.name);
+      row.classList.toggle('edited', !!(n.pending && n.pending[+row.dataset.i]));
+      var dl = $('.diet-line', row), dk = P.dietaryKinds(c.dietary);
+      dl.innerHTML = dk.map(function (k) { return dietChip(k) + '<span class="dn" title="' + esc(k.name) + '">' + k.count + '</span>'; }).join('');
+      dl.title = dk.map(function (k) { return k.count + ' ' + k.name.toLowerCase(); }).join(', ');
     });
   }
   function markRows() {
@@ -2135,7 +2462,13 @@
     var an = P.analyseLayout(r, n.tables);
     var errored = n.banner && n.banner.kind === 'error';
     var h = '';
-    if (errored) {
+    var pend = pendingCount(n);
+    if (pend && !errored && n.companies.length) {
+      h += '<p class="big warn">Changes not applied yet.</p><p class="sub">The plan below is the last one planned. Press Enter, or choose Update the plan, to seat everyone again.</p>' +
+           '<button type="button" class="btn solid" id="updatePlan">Update the plan</button>';
+    } else if (!n.companies.length && !errored) {
+      h += '<p class="big">No bookings yet.</p><p class="sub">Add a booking and the planner sets out the tables and seats it.</p>';
+    } else if (errored) {
       h += '<p class="big warn">These changes are not planned yet.</p><p class="sub">The plan below is the last one that worked.</p>';
     } else if (n.alloc && !n.stale) {
       h += '<p class="big ok">All ' + n.alloc.stats.guests + ' guests are seated.</p>' +
@@ -2145,7 +2478,7 @@
     } else {
       h += '<p class="big">' + guestsOf(n) + ' guests booked.</p><p class="sub">Not planned yet.</p>';
     }
-    if (n.stale) h += '<button type="button" class="btn solid" id="updatePlan">Update the plan</button>';
+    if (n.stale && !pend) h += '<button type="button" class="btn solid" id="updatePlan">Update the plan</button>';
     var guestsHere = guestsOf(n);
     if (r.approvedCapacity && guestsHere > r.approvedCapacity) {
       h += '<p class="alert">The bookings come to ' + guestsHere + ' guests, more than the approved ' + r.approvedCapacity + (r.dummy ? ' (dummy figure)' : '') + '. It needs sign off before it is used.</p>';
@@ -2184,6 +2517,15 @@
     if (Object.keys(n.locks).length) h += '<span><i style="background:' + css('--alert') + '"></i>Locked table</span>';
     if (n.edit) h += '<span><b>Move tables is on.</b> Drag a table to move it.</span>';
     if (n.hl) h += '<span><b>Showing only ' + esc(n.hl) + '.</b> Click its colour again to show everyone.</span>';
+    var ks = P.kitchenKinds(n.companies);
+    if (n.showDiet && ks.length) {
+      h += '<span class="dkey"><b>Dietary needs:</b>' + ks.map(function (k) {
+        return '<button type="button" class="dkb' + (n.dietFilter === k.key ? ' on' : '') + '" data-diet="' + esc(k.key) + '" aria-pressed="' + (n.dietFilter === k.key) + '">' + dietChip(k) + esc(k.name) + '</button>';
+      }).join('') + '</span>';
+      h += '<span>A mark on a table means someone in that group has the need. Which table they sit at comes from the pre event form. Click a need to find it.</span>';
+    }
+    var shown = ks.filter(function (k) { return k.key === n.dietFilter; })[0];
+    if (n.showDiet && shown) h += '<span><b>Showing only groups with ' + esc(shown.name.toLowerCase()) + '.</b> Click it again to show everyone.</span>';
     $('#legendNote').innerHTML = h;
   }
 
@@ -2208,9 +2550,11 @@
   function renderKitchen() {
     var n = cur(), a = n.alloc, kit = $('#kitchen'), pl = $('#printList');
     if (!a) { kit.innerHTML = ''; pl.innerHTML = ''; return; }
-    var tot = P.kitchenTotals(a.companies);
+    var tot = P.kitchenKinds(n.companies);
     kit.innerHTML = tot.length
-      ? '<b>For the kitchen</b><div class="chips">' + tot.map(function (x) { return '<span class="chipx">' + esc(x[0].charAt(0).toUpperCase() + x[0].slice(1)) + '<b>' + x[1] + '</b></span>'; }).join('') + '</div><p class="hint">Totals for the night. Exact counts for each table come from the pre event form.</p>'
+      ? '<b>For the kitchen</b><div class="chips">' + tot.map(function (k) {
+          return '<button type="button" class="chipx dk' + (n.dietFilter === k.key ? ' on' : '') + '" data-diet="' + esc(k.key) + '" aria-pressed="' + (n.dietFilter === k.key) + '">' + dietChip(k) + esc(k.name) + '<b>' + k.count + '</b></button>';
+        }).join('') + '</div><p class="hint" style="margin:6px 0 0">Click a need to find the groups on the plan.</p>'
       : '';
     var h = '<h2 style="font-size:18px;margin:18px 0 4px">Who sits where</h2><table class="list"><thead><tr><th>Company</th><th class="num">Guests</th><th>Tables</th></tr></thead><tbody>';
     a.order.forEach(function (nm, i) {
@@ -2221,7 +2565,7 @@
   }
 
   function renderAll() { hideCsv(); renderRoomControls(); renderBookings(); renderStatus(); renderBanner(); renderLegend(); renderSel(); renderKitchen(); refreshRows(); updateTools(); draw(); }
-  function renderLight() { hideCsv(); renderStatus(); renderBanner(); renderLegend(); renderSel(); renderKitchen(); refreshRows(); updateTools(); $('#guestTotal').textContent = guestsOf(cur()) + ' guests'; draw(); }
+  function renderLight() { hideCsv(); renderStatus(); renderBanner(); renderLegend(); renderSel(); renderKitchen(); refreshRows(); updateTools(); renderChangeBar(); $('#guestTotal').textContent = guestsOf(cur()) + ' guests'; draw(); }
   function hideCsv() { $('#csvbox').hidden = true; }
 
   // ---------------------------------------------------------------- planning
@@ -2263,21 +2607,23 @@
   function growNote(lay, spareLeft) {
     var t = growLog.tables;
     return 'Added ' + t + ' table' + (t > 1 ? 's' : '') + ' and re spaced the room. Tables are now about ' + gapText(lay.clearance) + ' m apart.' +
-      (spareLeft != null && spareLeft < cur().room.spare ? ' Only ' + spareLeft + ' spare table' + (spareLeft === 1 ? '' : 's') + ' fit.' : '');
+      (spareLeft != null && spareLeft < P.spareTables(cur().room, P.tablesNeededFor(cur().companies, cur().room.tableType)) ? ' Only ' + spareLeft + ' spare table' + (spareLeft === 1 ? '' : 's') + ' fit.' : '');
   }
   function plan(fullReplan, note, grew) {
     var n = cur();
-    if (!grew) growLog = { tables: 0 };
-    var prev = n.alloc ? n.alloc.plan : null;
+    if (!grew) growLog = { tables: 0, extra: 0 };
+    n.pending = {};
+    var allowFull = !!fullReplan, allowSplit = fullReplan === 'split';
+    var prev = n.alloc && Object.keys(n.alloc.plan).length ? n.alloc.plan : null;
     var lead = describeChange(n.snap, n.companies);
-    var res = P.allocate({ room: n.room, tables: n.tables, companies: n.companies, locks: n.locks, previous: prev, allowFullReplan: !!fullReplan });
+    var res = P.allocate({ room: n.room, tables: n.tables, companies: n.companies, locks: n.locks, previous: prev, allowFullReplan: allowFull, allowFragments: allowSplit });
     if (!res.ok) {
       // More tables are needed: add them and re space the whole room, unless that would pass the approved capacity.
       if (res.kind === 'tables' && res.deficit > 0 && !grew) {
         // Capacity is a number of people, so it is the guests that count, not the chairs set out.
         var need = P.tablesNeededFor(n.companies, n.room.tableType);
         var minWant = Math.max(n.tables.length + res.deficit, need);
-        var want = Math.max(minWant, need + n.room.spare);
+        var want = Math.max(minWant, need + P.spareTables(n.room, need));
         var guestsNow = guestsOf(n);
         var overCap = n.room.approvedCapacity && guestsNow > n.room.approvedCapacity;
         var doGrow = function () {
@@ -2300,11 +2646,25 @@
         return doGrow();
       }
 
-      if (res.kind === 'stuck' && (grew || 0) < 3 && !(n.room.approvedCapacity && guestsOf(n) > n.room.approvedCapacity)) {
-        var more = respaceTo(n.tables.length + 1);
-        if (more.ok) {
-          growLog.tables += 1;
-          return plan(fullReplan, growNote(more, null), (grew || 0) + 1);
+      if (res.kind === 'stuck') {
+        var overCap2 = !!(n.room.approvedCapacity && guestsOf(n) > n.room.approvedCapacity);
+        var spareNow = n.tables.length - P.tablesNeededFor(n.companies, n.room.tableType);
+        var g = Math.max(1, grew || 0);
+        // 1. nearly out of spare tables: add one, re space, and try again
+        if (!overCap2 && spareNow < 2 && (grew || 0) < 3) {
+          var more = respaceTo(n.tables.length + 1);
+          if (more.ok) { growLog.tables += 1; return plan(fullReplan, growNote(more, null), (grew || 0) + 1); }
+        }
+        // 2. plan the night again, keeping everyone where it can
+        if (!allowFull) return plan('full', note, g);
+        if (!allowSplit) {
+          // 3. if the room can take another table, that is better than splitting a group
+          if (!overCap2 && growLog.extra < 3) {
+            var more2 = respaceTo(n.tables.length + 1);
+            if (more2.ok) { growLog.tables += 1; growLog.extra += 1; return plan('full', growNote(more2, null), g); }
+          }
+          // 4. last resort: let a group split, and say so
+          return plan('split', note, g);
         }
       }
       var banner = { kind: 'error', title: lead ? lead + ' Could not fit this in.' : 'Could not plan this night', text: res.error };
@@ -2318,15 +2678,26 @@
       if (acts.length) banner.actions = acts;
       n.banner = banner;
       renderLight();
+      if (undoDepth > 0) notify('That could not be planned. See the message above the plan.', { noUndo: true });
       return false;
     }
     n.alloc = res; n.stale = false;
     n.marks = prev ? computeMarks(prev, res) : null;
     var total = res.companies.length;
+    if (!total) {
+      n.banner = { kind: '', title: prev && Object.keys(prev).length ? 'All bookings removed.' : 'Start by adding a booking.',
+                   text: 'The planner sets out the tables and seats each company as you add them. You can also paste a list under Room set up.',
+                   actions: [{ label: 'Add a booking', run: function () { $('#addCo').click(); } }] };
+      n.snap = clone(n.companies);
+      renderLight();
+      if (undoDepth > 0) notify('All bookings removed.', { noUndo: true });
+      return true;
+    }
     if (!prev) {
-      n.banner = { kind: '', title: 'Planned ' + total + ' companies. Now try it.', note: note,
-                   text: 'Press + beside any company, or type a new number. Only the tables that have to move will move.',
+      n.banner = { kind: '', title: 'Planned ' + total + (total === 1 ? ' company' : ' companies') + '. Now try it.', note: note,
+                   text: 'Press + beside any company, or type a new number and press Enter. Only the tables that have to move will move.',
                    actions: [{ label: 'Show me', run: demoCut }] };
+      if (undoDepth > 0) notify('Plan updated.');
     } else {
       var ch = res.changes;
       var affected = ch.changed.length + ch.added.length + ch.reseated.length;
@@ -2339,11 +2710,13 @@
       var head = affected === 0 ? (ch.removed.length ? 'Nothing else moved.' : (lead ? 'Nothing moved.' : 'Plan is unchanged.'))
                : (affected === 1 ? 'One company affected.' : affected + ' companies affected.');
       var ms = 'Replanned in ' + Math.max(1, Math.round(res.stats.ms)) + ' ms.';
-      var text = res.stats.replanned ? 'The room was too full to adjust the old plan, so everyone was seated again from scratch.'
+      var text = res.stats.replanned ? 'This change did not fit around the old plan, so the night was planned again, keeping everyone where it could.'
                : (res.stats.rippled ? 'The room was tight, so the nearest neighbours shifted along. The other ' + stayed + ' of ' + total + ' stayed exactly where they were.'
                : (affected > 0 ? stayed + ' of ' + total + ' stayed exactly where they were.' : ''));
+      if (res.stats.split.length) text = (text ? text + ' ' : '') + 'The room is too full for ' + res.stats.split.join(' and ') + ' to sit in one block.';
       n.banner = { kind: 'change', title: (lead ? lead + ' ' : '') + head, note: note, text: (text ? text + ' ' : '') + ms, items: items,
                    actions: (prev && undoDepth > 0) ? [{ label: 'Undo this change', plain: true, run: undo }] : null };
+      if (undoDepth > 0) notify('Plan updated. ' + (affected === 0 ? 'Nothing else moved.' : (affected === 1 ? 'One company affected.' : affected + ' companies affected.')));
     }
     n.snap = clone(n.companies);
     if (res.violations.length) n.banner = { kind: 'error', title: 'Plan check failed', text: res.violations.join(' ') };
@@ -2393,7 +2766,8 @@
     n.room.style = st ? st.key : null;
     if (st) n.room.approvedCapacity = st.max;
     n.room.spare = Math.max(0, Math.min(12, parseInt($('#spare').value, 10) || 0));
-    var lay = P.makeLayout(n.room, n.room.tableType, P.tablesNeededFor(n.companies, n.room.tableType), n.room.spare);
+    var needSet = P.tablesNeededFor(n.companies, n.room.tableType);
+    var lay = P.makeLayout(n.room, n.room.tableType, needSet, P.spareTables(n.room, needSet));
     n.tables = lay.tables; n.layout = layoutInfo(lay);
     invalidate(n);
     plan();
@@ -2440,6 +2814,7 @@
     if (n.locks[from]) { n.locks[to] = n.locks[from]; delete n.locks[from]; }
     if (n.hl === from) n.hl = to;
     renderLight();
+    notify('Renamed to ' + to + '.', { noUndo: true });
   }
 
   function setSize(i, v) {
@@ -2490,7 +2865,9 @@
     var i = hitTable(p);
     if (i >= 0) {
       var t2 = n.tables[i], o = tableOwner(n, t2.id);
-      tip.textContent = 'Table ' + t2.id + (o ? ', ' + o.company + ', ' + o.seated + ' guests' : ', spare');
+      var tk = o && n.showDiet ? dietByCompany(n)[o.company] : null;
+      tip.textContent = 'Table ' + t2.id + (o ? ', ' + o.company + ', ' + o.seated + ' guests' : ', spare') +
+        (tk ? '. This group has ' + tk.map(function (k) { return k.count + ' ' + k.name.toLowerCase(); }).join(', ') : '');
       tip.style.left = p.x + 'px'; tip.style.top = p.y + 'px'; tip.hidden = false;
       setHover(o ? o.company : null);
     } else { tip.hidden = true; setHover(null); }
@@ -2540,32 +2917,90 @@
     }
     else if (e.target.closest('.rm')) {
       var name = n.companies[i].name;
-      n.companies.splice(i, 1); openDetail = -1;
-      if (n.locks[name]) delete n.locks[name];
-      renderBookings(); schedulePlan();
+      var gone = n.alloc && n.alloc.plan[name] ? n.alloc.plan[name].map(function (r) { return r.table; }) : [];
+      clearTimeout(planTimer); planTimer = null;
+      act(function () {
+        n.companies.splice(i, 1); openDetail = -1;
+        if (n.locks[name]) delete n.locks[name];
+        if (gone.length) {
+          var goneSet = {}; gone.forEach(function (id) { goneSet[id] = true; });
+          n.tables = n.tables.filter(function (t) { return !goneSet[t.id]; });
+          n.sel = null; n.hover = null; if (n.hl === name) n.hl = null;
+        }
+        renderBookings();
+        plan(false, 'Removed ' + name + (gone.length ? ' and its ' + gone.length + ' table' + (gone.length > 1 ? 's' : '') + '. The tables that are left have not moved.' : '.'));
+      });
     }
   });
+  var dietTimer = null;
   bk.addEventListener('input', function (e) {
-    var row = e.target.closest('.bk'); if (!row) return;
+    var t = e.target, nn = cur();
+    if (nn.draft && (t.id === 'dName' || t.id === 'dSize' || t.id === 'dDiet')) {
+      if (t.id === 'dName') nn.draft.name = t.value; else if (t.id === 'dSize') nn.draft.size = t.value; else nn.draft.diet = t.value;
+      if (nn.draft.err && t.id !== 'dDiet') { nn.draft.err = ''; $('#dErr').textContent = ''; }
+      return;
+    }
+    var row = t.closest('.bk'); if (!row) return;
     var i = +row.dataset.i, n = cur(), c = n.companies[i];
-    if (e.target.classList.contains('f-size')) { c.size = Math.max(0, Math.min(400, parseInt(e.target.value, 10) || 0)); $('#guestTotal').textContent = guestsOf(n) + ' guests'; schedulePlan(); }
-    else if (e.target.classList.contains('f-diet')) { c.dietary = e.target.value; renderKitchen(); }
+    if (t.classList.contains('f-size')) {
+      // typing a number waits for Enter or Update the plan, so "52" never plans for "5"
+      c.size = Math.max(0, Math.min(400, parseInt(t.value, 10) || 0));
+      $('#guestTotal').textContent = guestsOf(n) + ' guests';
+      var base = n.snap[i];
+      if (base && base.name === c.name && base.size === c.size) delete n.pending[i]; else n.pending[i] = true;
+      row.classList.toggle('edited', !!n.pending[i]);
+      renderChangeBar(); renderStatus();
+    } else if (t.classList.contains('f-diet')) {
+      c.dietary = t.value; renderKitchen(); renderLegend(); refreshRows(); draw();
+      clearTimeout(dietTimer); dietTimer = setTimeout(function () { notify('Kitchen list updated.', { noUndo: true }); }, 700);
+    }
+  });
+  bk.addEventListener('keydown', function (e) {
+    var t = e.target;
+    if (t.id === 'dName' || t.id === 'dSize' || t.id === 'dDiet') {
+      if (e.key === 'Enter') { e.preventDefault(); addDraft(); } else if (e.key === 'Escape') { e.preventDefault(); cancelDraft(); }
+      return;
+    }
+    if (t.classList && t.classList.contains('f-size')) {
+      var row = t.closest('.bk'), i = row ? +row.dataset.i : -1, n = cur();
+      if (e.key === 'Enter') { e.preventDefault(); applyPending(); }
+      else if (e.key === 'Escape' && n.pending[i] && n.snap[i]) {
+        e.preventDefault();
+        n.companies[i].size = n.snap[i].size; t.value = n.snap[i].size; delete n.pending[i];
+        row.classList.remove('edited'); $('#guestTotal').textContent = guestsOf(n) + ' guests'; renderChangeBar(); renderStatus();
+      }
+    }
+  });
+  bk.addEventListener('click', function (e) {
+    if (e.target.closest('#dAdd')) addDraft();
+    else if (e.target.closest('#dCancel')) cancelDraft();
   });
   bk.addEventListener('change', function (e) {
+    if (e.target.id === 'dAcc') { var dd = cur().draft; if (dd) dd.acc = e.target.checked; return; }
     var row = e.target.closest('.bk'); if (!row) return;
     var i = +row.dataset.i, n = cur(), c = n.companies[i];
     if (e.target.classList.contains('f-name')) renameCompany(i, e.target.value);
     else if (e.target.classList.contains('f-acc')) { c.accessible = e.target.checked; schedulePlan(); }
   });
 
-  $('#addCo').addEventListener('click', function () {
-    var n = cur(), k = n.companies.length + 1, name = 'New booking ' + k;
-    while (n.companies.some(function (c) { return c.name === name; })) name = 'New booking ' + (++k);
-    n.companies.push({ name: name, size: 20, accessible: false, dietary: '' });
-    renderBookings();
-    var rows = $$('.bk'), last = rows[rows.length - 1];
-    if (last) { last.scrollIntoView({ block: 'nearest' }); var f = $('.f-name', last); f.focus(); f.select(); }
-    schedulePlan();
+  $('#addCo').addEventListener('click', openDraft);
+  $('#dietBtn').addEventListener('click', function () {
+    var n = cur(); n.showDiet = !n.showDiet; if (!n.showDiet) n.dietFilter = null;
+    updateTools(); renderLegend(); renderKitchen(); draw();
+  });
+  function pickDiet(e) {
+    var b = e.target.closest('[data-diet]'); if (!b) return;
+    var n = cur(); n.dietFilter = n.dietFilter === b.dataset.diet ? null : b.dataset.diet;
+    if (n.dietFilter && !n.showDiet) { n.showDiet = true; updateTools(); }
+    renderLegend(); renderKitchen(); draw();
+  }
+  $('#legendNote').addEventListener('click', pickDiet);
+  $('#kitchen').addEventListener('click', pickDiet);
+  $('#changeBar').addEventListener('click', function (e) {
+    if (e.target.closest('#applyBtn')) applyPending();
+    else if (e.target.closest('#discardBtn')) discardPending();
+    else if (e.target.closest('#cbUndo')) undo();
+    else if (e.target.closest('#cbView')) { var s = $('#status'); if (s) s.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   });
   $('#usePaste').addEventListener('click', function () {
     var out = P.parseBookings($('#pasteText').value);
@@ -2573,8 +3008,10 @@
     if (!out.rows.length) return;
     var n = cur();
     pushUndo(n);
+    n.pending = {}; n.draft = null;
     n.companies = out.rows.map(function (r) { return { name: r.name, size: r.size, accessible: r.accessible, dietary: r.dietary }; });
-    var lay = P.makeLayout(n.room, n.room.tableType, P.tablesNeededFor(n.companies, n.room.tableType), n.room.spare);
+    var needPaste = P.tablesNeededFor(n.companies, n.room.tableType);
+    var lay = P.makeLayout(n.room, n.room.tableType, needPaste, P.spareTables(n.room, needPaste));
     n.tables = lay.tables; n.layout = layoutInfo(lay); invalidate(n); openDetail = -1;
     renderAll(); plan(); renderBookings();
   });
@@ -2655,13 +3092,9 @@
   if (window.ResizeObserver) {
     new ResizeObserver(function () { var w = $('#wrap').clientWidth; if (w !== lastW) { lastW = w; draw(); } }).observe($('#wrap'));
   } else window.addEventListener('resize', draw);
-  if (window.matchMedia) {
-    var mq = window.matchMedia('(prefers-color-scheme: dark)');
-    if (mq.addEventListener) mq.addEventListener('change', draw);
-  }
-  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   // go
+  fitRail();
   cur();
   renderAll();
   plan();
