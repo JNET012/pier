@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Room and seating planner | prepared for The Grand Pier</title>
 <meta name="theme-color" content="#066cb5">
-<meta name="robots" content="noindex, nofollow">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%AA%91%3C/text%3E%3C/svg%3E">
 <meta name="color-scheme" content="light only">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='17' fill='%23066CB5'/%3E%3Cg fill='%23FFDD00' stroke='%230A2740' stroke-width='1.4'%3E%3Ccircle cx='57' cy='32' r='6.2'/%3E%3Ccircle cx='49.7' cy='49.7' r='6.2'/%3E%3Ccircle cx='32' cy='57' r='6.2'/%3E%3Ccircle cx='14.3' cy='49.7' r='6.2'/%3E%3Ccircle cx='7' cy='32' r='6.2'/%3E%3Ccircle cx='14.3' cy='14.3' r='6.2'/%3E%3Ccircle cx='32' cy='7' r='6.2'/%3E%3Ccircle cx='49.7' cy='14.3' r='6.2'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -228,13 +228,22 @@
     .banner,.plan,.takeaway,.closing,details.setup,details.about{ margin-left:18px; margin-right:18px; }
   }
 
+  @page{ size:A4 landscape; margin:10mm; }
   @media print{
-    .rail,.changebar,.draft,.btn,.selbar,.plantools,.dkb,.top .demo-note,details.setup,details.about,.takeaway .tools{ display:none !important; }
-    .top{ background:#fff !important; color:#000 !important; padding-bottom:12px; }
-    .top::after{ display:none; }
-    .layout{ display:block; }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .rail,.changebar,.draft,.btn,.selbar,.plantools,.top .demo-note,details.setup,details.about,.takeaway .tools,#banner,.so,.top::after,.top .brand,.top .lede{ display:none !important; }
+    .dkb,.chipx.dk{ border:0 !important; box-shadow:none !important; background:transparent !important; padding:0 12px 0 0; font-size:11px; cursor:default; }
+    .chipx.dk{ border:1px solid #bbb !important; padding:3px 10px 3px 4px; }
+    .top{ background:#fff !important; color:#000 !important; padding:0 0 8px; min-height:0; border-bottom:1px solid #bbb; }
+    .head-left{ gap:14px; } .logo{ height:40px; filter:none; } h1{ font-size:24px; color:#000; }
+    .layout{ display:block; } .stage{ padding:0; }
     body{ background:#fff; color:#000; } .status,.banner,.canvaswrap{ border-color:#bbb; }
-    .takeaway{ page-break-inside:avoid; }
+    .status{ padding:4px 0 2px; border:0; } .status .big{ font-size:19px; } .status .sub{ font-size:12px; }
+    .printmeta{ margin:6px 0 0; font-size:13px; color:#333; }
+    .canvaswrap{ overflow:visible; border:0; break-inside:avoid; page-break-inside:avoid; }
+    #cv{ display:block; margin:0 auto; width:auto !important; height:auto !important; max-width:100% !important; max-height:114mm !important; }
+    .legend-note{ font-size:10.5px; margin-top:4px; gap:3px 14px; } #caption{ font-size:10.5px; margin:4px 0 0; }
+    .takeaway{ page-break-inside:avoid; margin-top:6px; padding-top:6px; font-size:10.5px; } .takeaway p, .takeaway small{ font-size:10.5px; margin:0; }
     .printonly{ display:block !important; }
   }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation:none !important; } }
@@ -281,6 +290,7 @@
   </aside>
 
   <main class="stage">
+    <p class="printonly printmeta" id="printMeta"></p>
     <div class="status" id="status" role="status"></div>
     <div class="banner" id="banner" role="status" hidden></div>
 
@@ -2010,15 +2020,16 @@
     return { fill: 'rgb(' + c.join(',') + ')', dark: t > 0.62 };
   }
 
+  var printW = null;   // while printing, the plan is drawn at this fixed width, then scaled to fit the sheet
   function draw() {
     var n = cur(), r = n.room, th = theme();
     var wrap = $('#wrap');
-    var cssW = Math.max(wrap.clientWidth, 760);
+    var cssW = printW || Math.max(wrap.clientWidth, 760);
     var small = cssW < 600;
     var padL = small ? 42 : 68, padR = small ? 14 : 30, padT = small ? 44 : 62, padB = small ? 40 : 54;
     var sc = (cssW - padL - padR) / r.width;
     var cssH = Math.round(r.depth * sc + padT + padB);
-    var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    var dpr = printW ? 3 : Math.min(window.devicePixelRatio || 1, 2.5);
     var pw = Math.round(cssW * dpr), ph = Math.round(cssH * dpr);
     if (canvas.width !== pw || canvas.height !== ph) { canvas.width = pw; canvas.height = ph; }
     canvas.style.height = cssH + 'px'; canvas.style.width = cssW + 'px';
@@ -2509,7 +2520,7 @@
 
   function renderLegend() {
     var n = cur(), h = '';
-    h += '<span>Point at or click a table to see who is sitting there</span>';
+    h += '<span class="so">Point at or click a table to see who is sitting there</span>';
     h += '<span>Filled chairs are guests, empty rings are spare seats</span>';
     h += '<span><i style="border:2px solid ' + css('--sea') + '"></i>Accessible zone</span>';
     if (n.marks && tooManyMoved(n)) h += '<span>Most of the room moved, so the gold rings are switched off</span>';
@@ -2522,7 +2533,7 @@
       h += '<span class="dkey"><b>Dietary needs:</b>' + ks.map(function (k) {
         return '<button type="button" class="dkb' + (n.dietFilter === k.key ? ' on' : '') + '" data-diet="' + esc(k.key) + '" aria-pressed="' + (n.dietFilter === k.key) + '">' + dietChip(k) + esc(k.name) + '</button>';
       }).join('') + '</span>';
-      h += '<span>A mark on a table means someone in that group has the need. Which table they sit at comes from the pre event form. Click a need to find it.</span>';
+      h += '<span>A mark on a table means someone in that group has the need. Which table they sit at comes from the pre event form.<span class="so"> Click a need to find it.</span></span>';
     }
     var shown = ks.filter(function (k) { return k.key === n.dietFilter; })[0];
     if (n.showDiet && shown) h += '<span><b>Showing only groups with ' + esc(shown.name.toLowerCase()) + '.</b> Click it again to show everyone.</span>';
@@ -2554,8 +2565,9 @@
     kit.innerHTML = tot.length
       ? '<b>For the kitchen</b><div class="chips">' + tot.map(function (k) {
           return '<button type="button" class="chipx dk' + (n.dietFilter === k.key ? ' on' : '') + '" data-diet="' + esc(k.key) + '" aria-pressed="' + (n.dietFilter === k.key) + '">' + dietChip(k) + esc(k.name) + '<b>' + k.count + '</b></button>';
-        }).join('') + '</div><p class="hint" style="margin:6px 0 0">Click a need to find the groups on the plan.</p>'
+        }).join('') + '</div><p class="hint" style="margin:6px 0 0"><span class="so">Click a need to find the groups on the plan.</span></p>'
       : '';
+    if (!a.order.length) { pl.innerHTML = ''; return; }
     var h = '<h2 style="font-size:18px;margin:18px 0 4px">Who sits where</h2><table class="list"><thead><tr><th>Company</th><th class="num">Guests</th><th>Tables</th></tr></thead><tbody>';
     a.order.forEach(function (nm, i) {
       var c = a.companies[i];
@@ -3085,6 +3097,22 @@
     } catch (err) { /* fall through to the copy box */ }
     showCsv(csv);
   });
+  // printing: the plan is redrawn at a fixed, sharp size so the whole room fits the page, then drawn normally again
+  function beforePrint() {
+    var n = cur(), r = n.room, st = (r.styles || []).filter(function (s) { return s.key === r.style; })[0];
+    $('#printMeta').textContent = r.name + (st ? ', ' + st.label.toLowerCase() + ' (' + st.detail + ')' : '') + '. ' + guestsOf(n) + ' guests. Printed ' +
+      new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + '.';
+    printW = 1280; draw();
+  }
+  function afterPrint() { printW = null; draw(); }
+  window.addEventListener('beforeprint', beforePrint);
+  window.addEventListener('afterprint', afterPrint);
+  if (window.matchMedia) {
+    var pm = window.matchMedia('print');
+    var onPm = function (e) { if (e.matches) beforePrint(); else afterPrint(); };
+    if (pm.addEventListener) pm.addEventListener('change', onPm); else if (pm.addListener) pm.addListener(onPm);
+  }
+  window.__print = { before: beforePrint, after: afterPrint };
   $('#printBtn').addEventListener('click', function () { try { window.print(); } catch (err) { /* printing is blocked here */ } });
 
   // redraw on size or theme change
