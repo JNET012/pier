@@ -214,6 +214,9 @@
   .dkey{ display:inline-flex; flex-wrap:wrap; align-items:center; gap:6px; }
   .dkb, .chipx.dk{ display:inline-flex; align-items:center; gap:6px; background:var(--sheet); cursor:pointer; color:var(--ink); font:inherit; }
   .dkb{ border:1.5px solid var(--rule); border-radius:999px; padding:3px 10px 3px 4px; font-size:13px; }
+  .info{ display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; padding:0; border-radius:50%; border:1.5px solid var(--brand); background:transparent; color:var(--brand); font:800 12px/1 var(--body); cursor:pointer; }
+  .info[aria-expanded="true"]{ background:var(--brand); color:#fff; }
+  .dietnote{ flex-basis:100%; max-width:70ch; }
   .chipx.dk{ padding-left:5px; line-height:1.2; }
   .chipx.dk b{ margin-left:4px; line-height:1.2; }
   .dkb.on, .chipx.dk.on{ border-color:var(--brand); box-shadow:0 0 0 2px var(--brand); }
@@ -245,8 +248,46 @@
     .legend-note{ font-size:10.5px; margin-top:4px; gap:3px 14px; } #caption{ font-size:10.5px; margin:4px 0 0; }
     .takeaway{ page-break-inside:avoid; margin-top:6px; padding-top:6px; font-size:10.5px; } .takeaway p, .takeaway small{ font-size:10.5px; margin:0; }
     .printonly{ display:block !important; }
+    .info{ display:none !important; } .dietnote{ display:block !important; font-size:10.5px; }
   }
   @media (prefers-reduced-motion:reduce){ *{ transition:none !important; animation:none !important; } }
+
+  /* saved layouts and floor items */
+  .tmplbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
+  .tmplbar .fld{margin:0;flex:0 0 auto}
+  .tmplbar select{width:auto;flex:1 1 12rem;min-width:0;max-width:min(26rem,100%)}
+  .tmplform{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}
+  .tmplform .fld{margin:0;flex:0 0 auto}
+  .tmplform input[type=text]{width:auto;flex:1 1 16rem;max-width:26rem}
+  .tmplbar [hidden],.tmplform[hidden],.tmplform [hidden],.fadd [hidden],#tmplText[hidden],#tmplMsg[hidden]{display:none !important}
+  .tmplnote{margin:0 0 10px;font-size:13px}
+  .fi{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:8px 0;border-bottom:1px solid #dce6ee}
+  .fi input{width:5rem}
+  .fadd{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0}
+  #tmplText{width:100%;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace}
+
+  /* events and team sharing */
+  .evbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px}
+  .evbar .fld{margin:0;flex:0 0 auto}
+  .evbar > label.fld{display:none}
+  .evbar select{width:100%;flex:1 1 100%;min-width:0}
+  .evform{display:grid;gap:8px;margin:0 0 10px;padding:10px;border:1px solid #dce6ee;border-radius:8px;background:#f7fafc}
+  .evform label{display:grid;gap:3px;font-size:13px}
+  .evform input,.evform select{width:100%}
+  .evform .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .evnote{margin:0 0 8px;font-size:13px}
+  .evnote.warn{color:#8a4b00;font-weight:600}
+  #evAll{margin:0 0 10px}
+  #evTable{overflow-x:auto;max-width:100%}
+  .rail input,.rail select{max-width:100%;box-sizing:border-box}
+  .tmplform input[type=text]{min-width:0}
+  .evt{width:100%;border-collapse:collapse;font-size:12.5px}
+  .evt th,.evt td{text-align:left;padding:5px 6px;border-bottom:1px solid #dce6ee;vertical-align:top}
+  .evt tr.on td{background:#eaf3fb}
+  .teambox{display:grid;gap:8px}
+  .teambox label{display:grid;gap:3px;font-size:13px}
+  .teambox input{width:100%}
+  .evform[hidden],.evform [hidden],.teambox [hidden],.evbar [hidden],#evNote[hidden]{display:none !important}
 </style>
 </head>
 <body>
@@ -265,6 +306,26 @@
 
 <div class="layout">
   <aside class="rail" aria-label="Bookings">
+    <div class="evbar so" id="evbar" role="group" aria-label="Events">
+      <label class="fld" for="evSel">Event</label>
+      <select id="evSel" aria-label="Choose an event"></select>
+      <button type="button" class="btn small" id="evNew">New event…</button>
+      <button type="button" class="btn small" id="evEdit">Name and date</button>
+      <button type="button" class="btn small" id="evCopy">Copy it</button>
+      <button type="button" class="btn small" id="evDel">Delete it</button>
+    </div>
+    <div class="evform so" id="evForm" hidden>
+      <label>Event name <input type="text" id="evName" maxlength="80" placeholder="For example, Harbourline Christmas party" autocomplete="off"></label>
+      <label>Date <input type="date" id="evDate"></label>
+      <div id="evNewOnly" class="evform" style="border:0;padding:0;background:none;margin:0">
+        <label>Room <select id="evRoom"></select></label>
+        <label>Layout <select id="evLayout"></select></label>
+        <label>Bookings <select id="evBook"><option value="none">No bookings yet</option><option value="copy">Copy the bookings from the event I am on</option><option value="sample">Sample bookings</option></select></label>
+      </div>
+      <div class="row"><button type="button" class="btn small" id="evGo">Create</button><button type="button" class="btn small" id="evCancel">Cancel</button><span class="hint" id="evErr" role="alert" hidden></span></div>
+    </div>
+    <p class="hint evnote so" id="evNote"></p>
+    <details class="so" id="evAll"><summary>All events</summary><div id="evTable"></div></details>
     <div class="seg" id="roomSeg" role="group" aria-label="Choose a room"></div>
     <div class="styleline" id="styleLine" hidden>
       <div class="fld" id="styleLabel">Layout style</div>
@@ -300,13 +361,31 @@
           <button type="button" class="btn small" id="addTable">Add a table</button>
           <button type="button" class="btn small" id="tidyBtn">Space the tables evenly</button>
           <button type="button" class="btn small toggle" id="moveBtn" aria-pressed="false" title="Turn on to drag tables around the plan">Move tables</button>
-          <button type="button" class="btn small toggle" id="dietBtn" aria-pressed="true" title="Show allergies and dietary needs on the tables">Dietary needs</button>
+          <button type="button" class="btn small toggle" id="dietBtn" aria-pressed="true" title="Show allergies and dietary needs on the tables. A mark means someone in that group has the need.">Dietary needs</button>
         </div>
         <div class="grp">
           <button type="button" class="btn small" id="undoBtn" disabled>Undo</button>
           <button type="button" class="btn small" id="unlockAll" disabled>Unlock all tables</button>
         </div>
       </div>
+      <div class="tmplbar so" id="tmplbar" role="group" aria-label="Saved layouts">
+        <label class="fld" for="tmplSel">Layout</label>
+        <select id="tmplSel" aria-label="Choose a saved layout"></select>
+        <button type="button" class="btn small" id="tmplItems" title="Open the floor items in Room set up">Add a dance floor, stage or bar</button>
+        <button type="button" class="btn small" id="tmplSave">Save this layout…</button>
+        <button type="button" class="btn small" id="tmplUpdate" hidden>Update it</button>
+        <button type="button" class="btn small" id="tmplDelete" hidden>Delete it</button>
+      </div>
+      <div class="tmplform so" id="tmplForm" hidden>
+        <label class="fld" for="tmplName">Name</label>
+        <input type="text" id="tmplName" maxlength="60" placeholder="For example, Christmas party with a dance floor" autocomplete="off">
+        <button type="button" class="btn small" id="tmplSaveGo">Save</button>
+        <button type="button" class="btn small" id="tmplCancel">Cancel</button>
+        <label class="fld" for="tmplWhere" id="tmplWhereRow" hidden>Keep it
+          <select id="tmplWhere"><option value="team">Shared with the team</option><option value="me">Only on this computer</option></select></label>
+        <span class="hint" id="tmplErr" role="alert" hidden></span>
+      </div>
+      <p class="hint tmplnote so" id="tmplNote"></p>
       <div class="canvaswrap" id="wrap">
         <canvas id="cv" tabindex="0" role="img" aria-label="Floorplan with tables"></canvas>
         <div class="tip" id="tip" hidden></div>
@@ -353,14 +432,52 @@
           <input type="number" id="cap" min="0" step="10">
         </div>
         <label class="chk"><input type="checkbox" id="showScore"> Show how good each table position is</label>
-        <div><button type="button" class="btn small" id="resetNight">Start this room again</button></div>
+        <div>
+          <span class="fld">Floor items</span>
+          <div id="fitems"></div>
+          <div class="fadd"><span>Add to the floor:</span>
+            <button type="button" class="btn small" data-add="dancefloor">Dance floor</button>
+            <button type="button" class="btn small" data-add="stage">Stage</button>
+            <button type="button" class="btn small" data-add="bar">Bar</button>
+            <button type="button" class="btn small" data-add="buffet">Buffet</button>
+          </div>
+          <p class="hint">Turn on Move tables, then drag an item to where you want it. The tables re space around it. Save the result with Save this layout.</p>
+        </div>
+        <div>
+          <span class="fld">Share or back up saved layouts</span>
+          <p class="hint">Saved layouts are kept in this browser. To use them on another computer, show them as text, copy it, and paste it there.</p>
+          <div class="fadd"><button type="button" class="btn small" id="tmplShow">Show my saved layouts as text</button><button type="button" class="btn small" id="tmplLoad" hidden>Load layouts from the text</button></div>
+          <textarea id="tmplText" rows="6" hidden aria-label="Saved layouts as text"></textarea>
+          <p class="hint" id="tmplMsg" role="status" hidden></p>
+        </div>
+        <div class="teambox" id="teamBox">
+          <span class="fld">Team sharing</span>
+          <p class="hint" id="teamMsg" role="status"></p>
+          <div id="teamConn">
+            <label>Project web address <input type="url" id="teamUrl" placeholder="https://your-project.supabase.co" autocomplete="off"></label>
+            <label>Public key <input type="text" id="teamAnon" placeholder="the anon public key" autocomplete="off"></label>
+            <button type="button" class="btn small" id="teamSaveConn">Save connection</button>
+          </div>
+          <div id="teamSign" hidden>
+            <label>Email <input type="email" id="teamEmail" autocomplete="username"></label>
+            <label>Password <input type="password" id="teamPass" autocomplete="current-password"></label>
+            <button type="button" class="btn small" id="teamIn">Sign in</button>
+          </div>
+          <div class="fadd" id="teamOut" hidden><button type="button" class="btn small" id="teamRefresh">Refresh shared layouts</button><button type="button" class="btn small" id="teamOutBtn">Sign out</button></div>
+        </div>
+        <div>
+          <span class="fld">Saved on this computer</span>
+          <p class="hint">Events, with their bookings and guest details, are kept in this browser so you can come back to them. Nothing is sent anywhere. On a shared computer, clear them when you finish.</p>
+          <button type="button" class="btn small" id="evWipe">Clear everything saved in this browser</button>
+        </div>
+        <div><button type="button" class="btn small" id="resetNight">Start this event again</button></div>
       </div>
     </details>
 
     <details class="about">
       <summary>What this demonstration is, and what it is not</summary>
       <ul>
-        <li><b>The rooms are stand ins.</b> The Great Hall is traced from a demonstration drawing and sized so the planner's own table counts match the venue's published capacity: up to 650 guests for a banquet in rounds of 12, and 600 to 650 for cabaret in rounds of 8. The Regency Suite is invented. In a real build each room is traced from the architect's record drawing using the dimensions printed on it, then checked against that drawing and on site.</li>
+        <li><b>The rooms are drawn from the architect's record drawings.</b> The Great Hall comes from the Level 0 Pavilion Deck plan and the Regency Suite from the Level 2 plan, both dated October 2010. Walls, doors and fixed blocks are read from the drawings to about 0.2 metres and have not been checked on site. Events keep their own bookings, layout and seating, and are saved in this browser. Where the stage, dance floor and bar go is not on the drawings, so those are items you can add, move and resize, and save as a layout. The capacities are the venue's published figures.</li>
         <li><b>The companies are invented.</b> Any resemblance to real businesses is coincidence.</li>
         <li><b>Position scores are placeholders.</b> Distance from the stage and from service doors are guesses. In a real build the events manager ranks the tables and the weights are worked back from that.</li>
         <li><b>Table spacing is automatic.</b> The planner works out the widest comfortable gap at which the tables you need will fit, spreads them evenly, and keeps them clear of fixed rooms and features, columns, doors and exits. When more tables are needed it re spaces the whole room. The spacing limits here are placeholders: 1.5 m between table edges is treated as comfortable, and the planner will go as tight as 1.25 m before it tells you the room is full. Tables also stay at least 1.2 m clear of any door opening.</li>
@@ -518,7 +635,13 @@
     var stageD = dist(t.x, t.y, sx, sy);
     var doorD = 99;
     (room.serviceDoors || []).forEach(function (d) { doorD = Math.min(doorD, dist(t.x, t.y, d[0], d[1])); });
-    return -1.0 * stageD + 0.55 * Math.min(doorD, 12) - 0.30 * Math.abs(t.x - room.width / 2);
+    // a place behind the stage, where nobody can see it, scores far lower than any place in front
+    var sr = room.stageRect, behind = 0;
+    if (sr && sr.faces) {
+      if ((sr.faces === 'south' && t.y > sr.y + sr.d) || (sr.faces === 'north' && t.y < sr.y) ||
+          (sr.faces === 'east' && t.x < sr.x) || (sr.faces === 'west' && t.x > sr.x + sr.w)) behind = 40;
+    }
+    return -1.0 * stageD + 0.55 * Math.min(doorD, 12) - 0.30 * Math.abs(t.x - room.width / 2) - behind;
   }
   function scoreTables(tables, room, ref) {
     if (!tables.length) return;
@@ -566,6 +689,7 @@
     r.obstructions.forEach(function (o) { if (!stage && o.kind === 'stage') stage = o; });
     r.stageAt = stage ? [round2(stage.x + stage.w / 2), round2(stage.y + stage.d / 2)]
       : (src.stageAt ? [round2(src.stageAt[0] + dx), round2(src.stageAt[1] + dy)] : [round2(r.width / 2), round2(r.depth - 1)]);
+    r.stageRect = stage ? { x: stage.x, y: stage.y, w: stage.w, d: stage.d, faces: stage.faces || null } : null;
     r.serviceDoors = r.doors.filter(function (d) { return d.kind === 'service'; }).map(function (d) { return [d.x, d.y]; });
     r.tableType = r.tableType || 'round10';
     r.spare = r.spare == null ? 3 : r.spare;
@@ -620,6 +744,70 @@
   }
 
 
+  // One compact, connected block of `count` places, grown outward from the best-scoring one and always adding the
+  // best-scoring place that touches it. In a big room with fixed blocks, columns and doorways, taking the best
+  // places anywhere would leave stray pieces that cannot be split into company blocks.
+  function growBlock(pos, count, reach) {
+    var nbr = pos.map(function (a, i) {
+      var l = [];
+      for (var j = 0; j < pos.length; j++) if (j !== i && dist(a.x, a.y, pos[j].x, pos[j].y) <= reach) l.push(j);
+      return l;
+    });
+    var taken = {}, picked = [], front = {}, held = {};
+    var take = function (i) {
+      taken[i] = true; picked.push(i); delete front[i];
+      nbr[i].forEach(function (j) { held[j] = (held[j] || 0) + 1; if (!taken[j]) front[j] = true; });
+    };
+    var bestOf = function (cands) {
+      var bi = -1, bv = -Infinity;
+      cands.forEach(function (j) {
+        var v = pos[j].raw + 2 * (held[j] || 0);      // a little extra for places that fill a gap in the block
+        if (v > bv) { bv = v; bi = j; }
+      });
+      return bi;
+    };
+    var all = pos.map(function (t, i) { return i; });
+    if (!all.length || count < 1) return { chosen: [], rest: pos.slice() };
+    take(bestOf(all));
+    while (picked.length < count) {
+      var nxt = bestOf(Object.keys(front).map(Number));
+      if (nxt < 0) nxt = bestOf(all.filter(function (j) { return !taken[j]; }));   // the block cannot grow: start another
+      if (nxt < 0) break;
+      take(nxt);
+    }
+    var rest = pos.filter(function (t, i) { return !taken[i]; });
+    rest.sort(function (a, b) { return b.raw - a.raw; });
+    return { chosen: picked.map(function (i) { return pos[i]; }), rest: rest };
+  }
+
+  // A saved arrangement of table places, used again for another night: keep the places that still fit this room
+  // (the floor items may have moved), take one compact block of them for the tables the night needs, and put any
+  // extra tables beside them.
+  function layoutFromPositions(room, type, positions, count) {
+    var s = TABLE_TYPES[type], r = s.d / 2, poly = roomPoly(room), pos = [];
+    (positions || []).forEach(function (p) {
+      var x = round2(+p.x), y = round2(+p.y);
+      if (!isFinite(x) || !isFinite(y)) return;
+      if (!fitsPoly(poly, x, y, r, WALL_CLEAR) || nearDoor(room, x, y, r)) return;
+      for (var q = 0; q < room.obstructions.length; q++) if (rectGap(x, y, r, room.obstructions[q]) < FEATURE_CLEAR) return;
+      for (var k = 0; k < pos.length; k++) if (dist(pos[k].x, pos[k].y, x, y) < s.d + 0.3) return;    // two places on top of each other
+      pos.push({ x: x, y: y, type: type, seats: s.seats, d: s.d, row: 0 });
+    });
+    pos.forEach(function (t) { t.raw = rawScore(t, room); });
+    var chosen = pos.slice();
+    if (pos.length > count) chosen = growBlock(pos, count, pitchOf(pos) * 1.45).chosen;
+    if (chosen.length < count) {
+      var more = extraTables(room, type, chosen, count - chosen.length, chosen.map(function (t) { return [t.x, t.y]; }));
+      more.forEach(function (t) { chosen.push(t); });
+    }
+    chosen.forEach(function (t) { delete t.raw; });
+    flagAccessible(chosen, room); renumber(chosen);
+    scoreTables(chosen, room, gridCandidates(room, type)); flagAccessible(chosen, room);
+    var gaps = spacingInfo(chosen);
+    return { ok: chosen.length > 0 || count === 0, tables: chosen, clearance: gaps.median == null ? null : round2(gaps.median), pattern: 'saved',
+             capacity: pos.length, tight: gaps.median != null && gaps.median < 1.5, available: pos.length };
+  }
+
   // Work out the spacing automatically: the widest comfortable gap at which
   // `count` tables fit, spread evenly across the floor, clear of the stage,
   // dance floor, bar and columns. Never below the tight limit.
@@ -659,9 +847,9 @@
     if (!pick) pick = { pos: bestCap.pos, c: bestCap.c, pattern: bestCap.pattern };
     var pos = pick.pos.slice();
     pos.forEach(function (t) { t.raw = rawScore(t, room); });
-    pos.sort(function (a, b) { return b.raw - a.raw; });
-    var chosenT = pos.slice(0, Math.min(count, pos.length));
-    var rest = pos.slice(chosenT.length);
+    var gb = pos.length > count ? growBlock(pos, count, (TABLE_TYPES[type].d + pick.c) * 1.45) : null, chosenT, rest;
+    if (gb) { chosenT = gb.chosen; rest = gb.rest; }
+    else { pos.sort(function (a, b) { return b.raw - a.raw; }); chosenT = pos.slice(0, Math.min(count, pos.length)); rest = pos.slice(chosenT.length); }
 
     flagAccessible(chosenT, room); flagAccessible(rest, room);
     var accNeeded = Math.min(accWant, chosenT.length + rest.length);
@@ -1551,292 +1739,378 @@
 
   var SAMPLE_ROOMS = {
     great_hall: {
-          "key": "great_hall",
-          "name": "The Great Hall",
-          "dummy": false,
-          "verified": false,
-          "source": "a demonstration drawing (D-101, Pavilion Gallery)",
-          "outline": [
-                [
-                      4.83,
-                      30.92
-                ],
-                [
-                      57.33,
-                      30.92
-                ],
-                [
-                      57.33,
-                      22.58
-                ],
-                [
-                      54.17,
-                      22.58
-                ],
-                [
-                      54.17,
-                      8.17
-                ],
-                [
-                      38.17,
-                      0.0
-                ],
-                [
-                      0.0,
-                      0.0
-                ],
-                [
-                      0.0,
-                      24.83
-                ],
-                [
-                      4.83,
-                      24.83
-                ]
+        "key": "great_hall",
+        "name": "The Great Hall",
+        "dummy": false,
+        "verified": false,
+        "outline": [
+          [
+            10.14,
+            -8.98
           ],
-          "obstructions": [
-                {
-                      "label": "Curved feature",
-                      "kind": "keepclear",
-                      "x": 4.17,
-                      "y": 15.08,
-                      "w": 12.33,
-                      "d": 13.25
-                },
-                {
-                      "label": "Multi-purpose room, prep, plant",
-                      "kind": "room",
-                      "x": 21.5,
-                      "y": 24.42,
-                      "w": 19.17,
-                      "d": 6.5
-                },
-                {
-                      "label": "Stairs and WCs",
-                      "kind": "room",
-                      "x": 40.67,
-                      "y": 22.92,
-                      "w": 16.66,
-                      "d": 8.0
-                },
-                {
-                      "label": "Lift",
-                      "kind": "room",
-                      "x": 48.0,
-                      "y": 13.17,
-                      "w": 5.83,
-                      "d": 5.0
-                },
-                {
-                      "label": "Counter",
-                      "kind": "keepclear",
-                      "x": 10.33,
-                      "y": 1.92,
-                      "w": 8.34,
-                      "d": 4.16
-                },
-                {
-                      "label": "",
-                      "kind": "keepclear",
-                      "x": 24.25,
-                      "y": 21.75,
-                      "w": 8.33,
-                      "d": 1.08
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 3.75,
-                      "y": 19.83,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 16.08,
-                      "y": 19.83,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 22.08,
-                      "y": 19.83,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 29.08,
-                      "y": 19.83,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 35.58,
-                      "y": 19.83,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 41.5,
-                      "y": 19.83,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 47.5,
-                      "y": 19.83,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 4.17,
-                      "y": 6.0,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 10.25,
-                      "y": 6.0,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 15.83,
-                      "y": 5.83,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 22.25,
-                      "y": 6.0,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 29.17,
-                      "y": 6.0,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 35.67,
-                      "y": 6.33,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 41.67,
-                      "y": 6.08,
-                      "w": 0.5,
-                      "d": 0.5
-                },
-                {
-                      "label": "",
-                      "kind": "column",
-                      "x": 47.75,
-                      "y": 6.0,
-                      "w": 0.5,
-                      "d": 0.5
-                }
+          [
+            29.2,
+            -8.98
           ],
-          "doors": [
-                {
-                      "label": "Entrance",
-                      "kind": "entrance",
-                      "x": 0.0,
-                      "y": 9.25,
-                      "len": 2.4
-                },
-                {
-                      "label": "Exit",
-                      "kind": "exit",
-                      "x": 54.17,
-                      "y": 10.92,
-                      "len": 2.0
-                },
-                {
-                      "label": "Service",
-                      "kind": "service",
-                      "x": 34.42,
-                      "y": 0.0,
-                      "len": 1.6
-                }
+          [
+            29.2,
+            -15.0
           ],
-          "accessibleZone": {
-                "x": 0.0,
-                "y": 0.0,
-                "w": 16.5,
-                "d": 14.42
-          },
-          "stageAt": [
-                33.17,
-                20.08
+          [
+            47.7,
+            -15.0
           ],
-          "tableType": "round12",
-          "spare": 3,
-          "style": "banquet",
-          "approvedCapacity": 650,
-          "styles": [
-                {
-                      "key": "banquet",
-                      "label": "Banquet",
-                      "detail": "rounds of 12",
-                      "type": "round12",
-                      "max": 650
-                },
-                {
-                      "key": "cabaret",
-                      "label": "Cabaret",
-                      "detail": "rounds of 8",
-                      "type": "round8",
-                      "max": 600,
-                      "note": "the venue quotes 600 or 650"
-                }
+          [
+            47.7,
+            -28.2
+          ],
+          [
+            63.0,
+            -28.2
+          ],
+          [
+            63.0,
+            -43.3
+          ],
+          [
+            31.5,
+            -43.3
+          ],
+          [
+            31.5,
+            -57.98
+          ],
+          [
+            10.14,
+            -57.98
+          ],
+          [
+            8.99,
+            -58.75
+          ],
+          [
+            7.27,
+            -59.1
+          ],
+          [
+            5.54,
+            -58.75
+          ],
+          [
+            4.07,
+            -57.77
+          ],
+          [
+            3.09,
+            -56.31
+          ],
+          [
+            2.75,
+            -54.58
+          ],
+          [
+            3.09,
+            -52.85
+          ],
+          [
+            3.5,
+            -52.26
+          ],
+          [
+            3.5,
+            -14.7
+          ],
+          [
+            3.09,
+            -14.11
+          ],
+          [
+            2.75,
+            -12.38
+          ],
+          [
+            3.09,
+            -10.65
+          ],
+          [
+            4.07,
+            -9.19
+          ],
+          [
+            5.54,
+            -8.2
+          ],
+          [
+            7.27,
+            -7.86
+          ],
+          [
+            8.92,
+            -8.19
           ]
-    },
+        ],
+        "obstructions": [
+          {
+            "label": "",
+            "kind": "column",
+            "x": 9.2,
+            "y": -24.7,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 16.9,
+            "y": -24.7,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 24.6,
+            "y": -24.7,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 32.2,
+            "y": -24.7,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 39.8,
+            "y": -24.7,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 9.2,
+            "y": -43.2,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 16.9,
+            "y": -43.2,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 24.6,
+            "y": -43.2,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 32.2,
+            "y": -43.2,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 39.8,
+            "y": -43.2,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 47.4,
+            "y": -43.2,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "",
+            "kind": "column",
+            "x": 55.0,
+            "y": -43.2,
+            "w": 0.8,
+            "d": 0.8
+          },
+          {
+            "label": "Escalator down",
+            "kind": "keepclear",
+            "x": 33.5,
+            "y": -22.6,
+            "w": 14.2,
+            "d": 1.7
+          },
+          {
+            "label": "Escalator up",
+            "kind": "keepclear",
+            "x": 17.4,
+            "y": -48.2,
+            "w": 9.2,
+            "d": 5.2
+          },
+          {
+            "label": "Helter skelter",
+            "kind": "keepclear",
+            "x": 5.0,
+            "y": -15.8,
+            "w": 5.6,
+            "d": 5.4
+          },
+          {
+            "label": "Freefall",
+            "kind": "keepclear",
+            "x": 43.5,
+            "y": -43.2,
+            "w": 4.0,
+            "d": 3.6
+          },
+          {
+            "label": "Robocoaster",
+            "kind": "keepclear",
+            "x": 54.0,
+            "y": -40.4,
+            "w": 5.4,
+            "d": 5.4
+          },
+          {
+            "label": "Stage (position to confirm)",
+            "kind": "stage",
+            "x": 18.95,
+            "y": -28.3,
+            "w": 12,
+            "d": 3.5,
+            "movable": true,
+            "faces": "south"
+          }
+        ],
+        "doors": [
+          {
+            "label": "Entrance",
+            "kind": "entrance",
+            "x": 63.0,
+            "y": -36.0,
+            "len": 6.0
+          },
+          {
+            "label": "Exit",
+            "kind": "exit",
+            "x": 3.5,
+            "y": -29.0,
+            "len": 2.0
+          },
+          {
+            "label": "Exit",
+            "kind": "exit",
+            "x": 3.5,
+            "y": -38.0,
+            "len": 2.4
+          },
+          {
+            "label": "Exit",
+            "kind": "exit",
+            "x": 3.5,
+            "y": -48.4,
+            "len": 1.2
+          },
+          {
+            "label": "Exit",
+            "kind": "exit",
+            "x": 20.5,
+            "y": -57.98,
+            "len": 2.4
+          },
+          {
+            "label": "Exit",
+            "kind": "exit",
+            "x": 23.7,
+            "y": -57.98,
+            "len": 5.6
+          },
+          {
+            "label": "Exit",
+            "kind": "exit",
+            "x": 28.3,
+            "y": -57.98,
+            "len": 2.4
+          },
+          {
+            "label": "Captain Jack's",
+            "kind": "service",
+            "x": 40.0,
+            "y": -43.3,
+            "len": 3.0
+          },
+          {
+            "label": "Back of house",
+            "kind": "service",
+            "x": 47.7,
+            "y": -18.2,
+            "len": 2.4
+          }
+        ],
+        "accessibleZone": {
+          "x": 10.75,
+          "y": -36.1,
+          "w": 8,
+          "d": 10
+        },
+        "tableType": "round12",
+        "spare": 3,
+        "style": "banquet",
+        "approvedCapacity": 650,
+        "styles": [
+          {
+            "key": "banquet",
+            "label": "Banquet",
+            "detail": "rounds of 12",
+            "type": "round12",
+            "max": 650
+          },
+          {
+            "key": "cabaret",
+            "label": "Cabaret",
+            "detail": "rounds of 8",
+            "type": "round8",
+            "max": 600,
+            "note": "the venue quotes 600 or 650"
+          }
+        ],
+        "drawing": "the architect's record drawing 2118 C10 (Level 0 Pavilion Deck plan, October 2010)"
+      },
     regency_suite: {
-      key: 'regency_suite', name: 'The Regency Suite', dummy: true, verified: false,
-      outline: [[0, 0], [24, 0], [24, 16], [0, 16]],
-      width: 24, depth: 16,
+      key: 'regency_suite', name: 'The Regency Suite', dummy: false, verified: false,
+      drawing: "the architect's record drawing 2118 C13 (Level 2 plan, October 2010)",
+      // coordinates in metres, north at the top of the drawing: x runs east, y runs up from the south wall
+      outline: [[0, 25.15], [3.8, 25.15], [3.8, 24.15], [8.2, 24.15], [8.2, 25.15], [10.75, 25.15], [10.75, 18.1], [15.05, 18.1], [15.05, 16.45], [15.5, 16.45], [15.5, 1.65], [15.05, 1.65], [15.05, 0.0], [0, 0.0]],
       obstructions: [
-        { label: 'Stage', kind: 'stage', x: 0, y: 13, w: 9, d: 3 },
-        { label: 'Bar', kind: 'bar', x: 20.5, y: 5, w: 3.5, d: 5 },
-        { label: '', kind: 'column', x: 11.7, y: 7.7, w: 0.6, d: 0.6 }
+        { label: 'Stage (position to confirm)', kind: 'stage', x: 0, y: 9.65, w: 2.4, d: 6, movable: true, faces: 'east' }
       ],
       doors: [
-        { label: 'Entrance', kind: 'entrance', x: 12, y: 0, len: 2.6 },
-        { label: 'Service', kind: 'service', x: 24, y: 2.5, len: 1.8 },
-        { label: 'Exit', kind: 'exit', x: 0, y: 6, len: 1.8 },
-        { label: 'Balcony doors', kind: 'exit', x: 17, y: 16, len: 4 }
+        { label: 'Entrance', kind: 'entrance', x: 5.0, y: 24.15, len: 1.7 },
+        { label: 'Entrance', kind: 'entrance', x: 7.05, y: 24.15, len: 1.7 },
+        { label: 'Storage', kind: 'service', x: 11.95, y: 18.1, len: 1.7 },
+        { label: 'Terrace doors', kind: 'exit', x: 15.5, y: 12.65, len: 2.0 },
+        { label: 'Terrace doors', kind: 'exit', x: 15.5, y: 5.45, len: 2.0 },
+        { label: 'Kitchen door', kind: 'service', x: 8.9, y: 0.0, len: 0.95 },
+        { label: 'Kitchen door', kind: 'service', x: 2.9, y: 0.0, len: 0.9 },
+        { label: 'Exit', kind: 'exit', x: 1.1, y: 0.0, len: 1.2 }
       ],
-      accessibleZone: { x: 6, y: 0, w: 12, d: 6.4 },
-      stageAt: [4.5, 14.5], serviceDoors: [[24, 2.5]],
-      approvedCapacity: 160, tableType: 'round10', spare: 2
+      accessibleZone: { x: 2.0, y: 18.15, w: 8.5, d: 6.0 },
+      tableType: 'round10', spare: 2, approvedCapacity: 230
     }
   };
 
@@ -1861,7 +2135,7 @@
   var api = {
     MIN_PRESENCE: MIN_PRESENCE, TABLE_TYPES: TABLE_TYPES,
     gridCandidates: gridCandidates, scoreTables: scoreTables, flagAccessible: flagAccessible,
-    renumber: renumber, makeLayout: makeLayout, layoutEven: layoutEven, matchTables: matchTables, spacingInfo: spacingInfo, pitchOf: pitchOf, tablesNeededFor: tablesNeededFor, extraTables: extraTables,
+    renumber: renumber, makeLayout: makeLayout, layoutEven: layoutEven, layoutFromPositions: layoutFromPositions, growBlock: growBlock, matchTables: matchTables, spacingInfo: spacingInfo, pitchOf: pitchOf, tablesNeededFor: tablesNeededFor, extraTables: extraTables,
     analyseLayout: analyseLayout, allocate: allocate, verify: verify,
     parseBookings: parseBookings, parseDietary: parseDietary, kitchenTotals: kitchenTotals,
     roomPoly: roomPoly, bboxOf: bboxOf, pointInPoly: pointInPoly, polyDist: polyDist, polyArea: polyArea, edgeLengths: edgeLengths, fitsPoly: fitsPoly,
@@ -1892,6 +2166,7 @@
   Object.keys(P.SAMPLE_ROOMS).forEach(function (k) { roomDefs[k] = P.normaliseRoom(P.SAMPLE_ROOMS[k]); roomDefs[k].key = k; });
   var nights = {};
   var key = 'great_hall';
+  var events = [], evId = null;
   var openDetail = -1;
 
   function layoutInfo(lay) { return { clearance: lay.clearance, pattern: lay.pattern, tight: lay.tight, ok: lay.ok, capacity: lay.capacity }; }
@@ -1906,14 +2181,14 @@
     var lay = companies.length ? P.makeLayout(room, room.tableType, needNow, P.spareTables(room, needNow))
                                : { tables: [], clearance: null, pattern: null, tight: false, ok: true, capacity: null };
     return { room: room, companies: companies, tables: lay.tables, layout: layoutInfo(lay), alloc: null, locks: {}, stale: false, marks: null,
-             sel: null, hl: null, undo: [], showScore: false, edit: false, banner: null, snap: clone(companies), touched: false, pending: {}, draft: null, showDiet: true, dietFilter: null };
+             sel: null, hl: null, undo: [], showScore: false, edit: false, banner: null, snap: clone(companies), touched: false, pending: {}, draft: null, showDiet: true, dietFilter: null, dietInfo: false };
   }
-  function cur() { if (!nights[key]) { nights[key] = freshNight(key); } return nights[key]; }
+  function cur() { if (!evId) startEvents(); if (!nights[evId]) { nights[evId] = freshNight(key); } return nights[evId]; }
 
   // One undo history for everything: booking changes, tables added or moved, spacing, locks.
   var undoDepth = 0;
   function snapJSON(n) { return JSON.stringify({ companies: n.snap, tables: n.tables, alloc: n.alloc, locks: n.locks, layout: n.layout, stale: n.stale,
-    rs: { tableType: n.room.tableType, style: n.room.style, approvedCapacity: n.room.approvedCapacity, spare: n.room.spare } }); }
+    rs: { tableType: n.room.tableType, style: n.room.style, approvedCapacity: n.room.approvedCapacity, spare: n.room.spare }, furn: movableItems(n.room) }); }
   function pushUndo(n) {
     if (undoDepth > 0 || !n.alloc) return;
     n.undo.push(snapJSON(n)); if (n.undo.length > 50) n.undo.shift();
@@ -1926,6 +2201,7 @@
     n.companies = clone(s.companies); n.snap = clone(s.companies);
     n.tables = s.tables; n.alloc = s.alloc; n.locks = s.locks; n.layout = s.layout; n.stale = s.stale;
     if (s.rs) { n.room.tableType = s.rs.tableType; n.room.style = s.rs.style; n.room.approvedCapacity = s.rs.approvedCapacity; n.room.spare = s.rs.spare; }
+    if (s.furn) setFurniture(n.room, s.furn);
     n.marks = null; n.sel = null; n.hover = null; n.hl = null; openDetail = -1; n.pending = {};
     n.banner = { kind: '', title: 'Undone.', text: 'The plan is back as it was before your last change.' };
     renderRoomControls(); renderBookings(); renderLight();
@@ -2082,6 +2358,7 @@
       ctx.fillStyle = th.feat; ctx.fillRect(x, y, w, h);
       ctx.strokeStyle = th.featEdge; ctx.lineWidth = 1.5; ctx.setLineDash(o.kind === 'dancefloor' ? [4, 3] : []);
       ctx.strokeRect(x, y, w, h); ctx.setLineDash([]);
+      if (n.edit && o.movable) { ctx.save(); ctx.strokeStyle = '#066CB5'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.strokeRect(x - 3, y - 3, w + 6, h + 6); ctx.restore(); }
       if (o.kind === 'dancefloor') {
         ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
         ctx.strokeStyle = th.featEdge; ctx.globalAlpha = 0.25; ctx.lineWidth = 1;
@@ -2297,12 +2574,13 @@
     var shape = r.outline.length === 4 ? '' : ', ' + r.outline.length + ' walls';
     $('#roomSize').textContent = r.width.toFixed(1) + ' by ' + r.depth.toFixed(1) + ' metres' + shape + ', ' + Math.round(P.polyArea(r.outline)) + ' square metres of floor.';
     $('#caption').textContent = r.name + ', ' + r.width.toFixed(1) + ' by ' + r.depth.toFixed(1) + ' metres' + (shape ? ' at its widest' + shape : '') + '. ' +
-      (r.dummy ? 'Dummy floorplan. ' : (r.source ? 'Traced from ' + r.source + (r.verified ? ', and checked. ' : '. It is a stand in for the real hall and has not been checked against it. ') : (r.verified ? 'Drawn from the architect\'s plan and checked. ' : 'Drawn from the architect\'s plan, not yet checked. '))) +
+      (r.dummy ? 'Dummy floorplan. ' : (r.drawing ? 'Drawn from ' + r.drawing + (r.verified ? ', and checked on site. ' : ', not yet checked on site. ') : (r.source ? 'Traced from ' + r.source + (r.verified ? ', and checked. ' : '. It is a stand in for the real hall and has not been checked against it. ') : (r.verified ? 'Drawn from the architect\'s plan and checked. ' : 'Drawn from the architect\'s plan, not yet checked. ')))) +
       'This is not a capacity determination: every layout needs sign off by a competent person against the fire risk assessment and the premises licence.';
     $('#demoNote').innerHTML = '<strong>Demonstration.</strong> ' + (r.dummy
       ? 'The floorplan is a dummy and the position scores are placeholders.'
       : (r.source ? 'The floorplan is traced from a demonstration drawing, not the real Great Hall. The bookings are samples and the position scores are placeholders.'
                   : 'The room is drawn from the real plan. The bookings are samples and the position scores are placeholders.'));
+    renderTemplates(); renderFurniture(); renderEvents(); renderTeam();
   }
 
   var CHEVRON = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6l4.5 4.5L12.5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -2530,10 +2808,10 @@
     if (n.hl) h += '<span><b>Showing only ' + esc(n.hl) + '.</b> Click its colour again to show everyone.</span>';
     var ks = P.kitchenKinds(n.companies);
     if (n.showDiet && ks.length) {
-      h += '<span class="dkey"><b>Dietary needs:</b>' + ks.map(function (k) {
-        return '<button type="button" class="dkb' + (n.dietFilter === k.key ? ' on' : '') + '" data-diet="' + esc(k.key) + '" aria-pressed="' + (n.dietFilter === k.key) + '">' + dietChip(k) + esc(k.name) + '</button>';
+      h += '<span class="dkey"><b>Dietary needs:</b><button type="button" class="info" id="dietInfo" aria-expanded="' + !!n.dietInfo + '" aria-controls="dietNote" title="What the marks mean" aria-label="What the dietary marks mean">i</button>' + ks.map(function (k) {
+        return '<button type="button" class="dkb' + (n.dietFilter === k.key ? ' on' : '') + '" data-diet="' + esc(k.key) + '" aria-pressed="' + (n.dietFilter === k.key) + '" title="' + esc(k.name) + ': click to show only the groups that have it">' + dietChip(k) + esc(k.name) + '</button>';
       }).join('') + '</span>';
-      h += '<span>A mark on a table means someone in that group has the need. Which table they sit at comes from the pre event form.<span class="so"> Click a need to find it.</span></span>';
+      h += '<span class="dietnote" id="dietNote"' + (n.dietInfo ? '' : ' hidden') + '>A mark on a table means someone in that group has the need. Which table they sit at comes from the pre event form.<span class="so"> Click a need to find it.</span></span>';
     }
     var shown = ks.filter(function (k) { return k.key === n.dietFilter; })[0];
     if (n.showDiet && shown) h += '<span><b>Showing only groups with ' + esc(shown.name.toLowerCase()) + '.</b> Click it again to show everyone.</span>';
@@ -2837,10 +3115,572 @@
     schedulePlan();
   }
 
+  // ---------------------------------------------------------------- floor items and saved layouts
+  var FKIND = { stage: { label: 'Stage', w: 6, d: 2.4 }, dancefloor: { label: 'Dance floor', w: 8, d: 8 }, bar: { label: 'Bar', w: 4, d: 1.2 }, buffet: { label: 'Buffet', w: 6, d: 1.2 } };
+  function rd2(v) { return Math.round(v * 100) / 100; }
+  function movableItems(room) { return room.obstructions.filter(function (o) { return o.movable; }); }
+  function itemName(o) { return o.label ? o.label.replace(/ \(position to confirm\)/, '') : (FKIND[o.kind] ? FKIND[o.kind].label : 'Item'); }
+  function syncStage(room) {
+    var st = room.obstructions.filter(function (o) { return o.kind === 'stage'; })[0];
+    room.stageAt = st ? [rd2(st.x + st.w / 2), rd2(st.y + st.d / 2)] : [rd2(room.width / 2), rd2(room.depth - 1)];
+    room.stageRect = st ? { x: st.x, y: st.y, w: st.w, d: st.d, faces: st.faces || null } : null;
+  }
+  function setFurniture(room, items) {
+    room.obstructions = room.obstructions.filter(function (o) { return !o.movable; }).concat(clone(items || []).map(function (o) { o.movable = true; return o; }));
+    syncStage(room);
+  }
+  function keepInside(room, o) {
+    o.w = Math.max(0.5, Math.min(room.width, +o.w || 1)); o.d = Math.max(0.5, Math.min(room.depth, +o.d || 1));
+    o.x = rd2(Math.max(0, Math.min(room.width - o.w, +o.x || 0))); o.y = rd2(Math.max(0, Math.min(room.depth - o.d, +o.y || 0)));
+  }
+
+  // after the floor items change: re space the tables round them, or put the change back if they will not fit
+  function commitFloor(before, oldFurn, note) {
+    var n = cur();
+    syncStage(n.room);
+    if (n.tables.length) {
+      var lay;
+      undoDepth++;
+      try {
+        lay = respaceTo(n.tables.length);
+        if (lay.ok) plan(false, note + ' The tables were re spaced round it, about ' + gapText(lay.clearance) + ' m apart.', true);
+      } finally { undoDepth--; }
+      if (!lay.ok) {
+        setFurniture(n.room, oldFurn);
+        n.banner = { kind: 'error', title: 'No room for that', text: 'All ' + n.tables.length + ' tables would not fit round it, so it has been put back.' };
+        renderRoomControls(); renderLight(); return;
+      }
+      if (before) { n.undo.push(before); if (n.undo.length > 50) n.undo.shift(); }
+    }
+    renderRoomControls(); renderLight(); updateTools();
+  }
+  function editFloor(mutator, note) {
+    var n = cur(), before = n.alloc ? snapJSON(n) : null, oldFurn = clone(movableItems(n.room));
+    mutator(n.room);
+    commitFloor(before, oldFurn, note);
+  }
+  function renderFurniture() {
+    var r = cur().room, box = $('#fitems');
+    var rows = r.obstructions.map(function (o, i) { return { o: o, i: i }; }).filter(function (x) { return x.o.movable; });
+    box.innerHTML = rows.length ? rows.map(function (x) {
+      return '<div class="fi" data-i="' + x.i + '"><b>' + esc(itemName(x.o)) + '</b>' +
+        '<label>Width <input type="number" class="fw" min="1" max="40" step="0.5" value="' + x.o.w + '"> m</label>' +
+        '<label>Depth <input type="number" class="fd" min="0.5" max="40" step="0.5" value="' + x.o.d + '"> m</label>' +
+        (x.o.kind === 'stage' ? '<label>Faces <select class="ff">' + ['north', 'south', 'east', 'west'].map(function (d) { return '<option value="' + d + '"' + (x.o.faces === d ? ' selected' : '') + '>' + d + '</option>'; }).join('') + '</select></label>' : '') +
+        '<button type="button" class="btn small fro" title="Turn it a quarter turn">Rotate 90°</button> <button type="button" class="btn small fr">Remove</button></div>';
+    }).join('') : '<p class="hint">Nothing has been put on the floor yet.</p>';
+  }
+  $('#fitems').addEventListener('change', function (e) {
+    var row = e.target.closest('.fi'); if (!row) return;
+    var i = +row.dataset.i, name = itemName(cur().room.obstructions[i]).toLowerCase();
+    var w = parseFloat(row.querySelector('.fw').value), d = parseFloat(row.querySelector('.fd').value), ff = row.querySelector('.ff');
+    if (e.target.classList.contains('ff')) { editFloor(function (r) { r.obstructions[i].faces = ff.value; }, 'The stage now faces ' + ff.value + '.'); return; }
+    editFloor(function (r) { var o = r.obstructions[i]; if (w > 0) o.w = w; if (d > 0) o.d = d; keepInside(r, o); }, 'Resized the ' + name + '.');
+  });
+  $('#fitems').addEventListener('click', function (e) {
+    var rb = e.target.closest('.fro'); if (!rb) return;
+    var i = +rb.closest('.fi').dataset.i, name = itemName(cur().room.obstructions[i]).toLowerCase();
+    editFloor(function (r) {
+      var o = r.obstructions[i], cx = o.x + o.w / 2, cy = o.y + o.d / 2, w = o.w;
+      o.w = o.d; o.d = w; o.x = cx - o.w / 2; o.y = cy - o.d / 2;
+      if (o.faces) o.faces = { north: 'east', east: 'south', south: 'west', west: 'north' }[o.faces];
+      keepInside(r, o);
+    }, 'Turned the ' + name + ' a quarter turn.');
+  });
+  $('#fitems').addEventListener('click', function (e) {
+    var b = e.target.closest('.fr'); if (!b) return;
+    var i = +b.closest('.fi').dataset.i, name = itemName(cur().room.obstructions[i]).toLowerCase();
+    editFloor(function (r) { r.obstructions.splice(i, 1); }, 'Took the ' + name + ' off the floor.');
+  });
+  document.querySelectorAll('.fadd [data-add]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var kind = b.getAttribute('data-add'), k = FKIND[kind];
+      editFloor(function (r) {
+        var o = { label: k.label, kind: kind, x: r.width / 2 - k.w / 2, y: r.depth / 2 - k.d / 2, w: k.w, d: k.d, movable: true };
+        if (kind === 'stage') o.faces = 'south';
+        keepInside(r, o); r.obstructions.push(o);
+      }, 'Added a ' + k.label.toLowerCase() + ' to the floor.');
+      var n = cur(); n.edit = true; updateTools(); renderRoomControls();
+      notify('Added. Turn on Move tables if it is off, then drag it where you want it.', { noUndo: true });
+    });
+  });
+
+  // ---- saved layouts: kept in this browser, and readable as text so they can be copied to another computer
+  var STORE_KEY = 'grandpier.planner.layouts.v1', store = { custom: [] }, storeOk = true;
+  function loadStore() {
+    try { var raw = window.localStorage.getItem(STORE_KEY); if (raw) { var s = JSON.parse(raw); if (s && Array.isArray(s.custom)) store = s; } } catch (e) { storeOk = false; }
+  }
+  function saveStore() { try { window.localStorage.setItem(STORE_KEY, JSON.stringify(store)); return true; } catch (e) { storeOk = false; return false; } }
+  loadStore();
+
+  function defaultFurniture(k) { return movableItems(roomDefs[k]).map(function (o) { return clone(o); }); }
+  function centred(room, kind, w, d) {
+    var k = FKIND[kind], ww = w || k.w, dd = d || k.d;
+    return { label: k.label, kind: kind, x: rd2(room.width / 2 - ww / 2), y: rd2(room.depth / 2 - dd / 2), w: ww, d: dd, movable: true };
+  }
+  // a dance floor that starts at the front edge of the stage: 'east' for a stage on the west wall, 'south' for a stage facing south
+  function atStageFront(k, dir, w, d) {
+    var s = defaultFurniture(k).filter(function (o) { return o.kind === 'stage'; })[0], kd = FKIND.dancefloor, o;
+    if (!s) return centred(roomDefs[k], 'dancefloor', w, d);
+    o = { label: kd.label, kind: 'dancefloor', w: w || kd.w, d: d || kd.d, movable: true };
+    dir = s.faces || dir;
+    if (dir === 'south') { o.x = s.x + s.w / 2 - o.w / 2; o.y = s.y - o.d; }
+    else if (dir === 'north') { o.x = s.x + s.w / 2 - o.w / 2; o.y = s.y + s.d; }
+    else if (dir === 'west') { o.x = s.x - o.w; o.y = s.y + s.d / 2 - o.d / 2; }
+    else { o.x = s.x + s.w; o.y = s.y + s.d / 2 - o.d / 2; }
+    keepInside(roomDefs[k], o);
+    return o;
+  }
+  var EXAMPLES = {
+    great_hall: [
+      { id: 'ex-banquet', name: 'Example: banquet, stage in front of the north pillars', style: 'banquet', furn: function (k) { return defaultFurniture(k); } },
+      { id: 'ex-dance', name: 'Example: banquet with a dance floor in front of the stage', style: 'banquet', furn: function (k) { return defaultFurniture(k).concat([atStageFront(k, 'south', 8, 8)]); } },
+      { id: 'ex-cabaret', name: 'Example: cabaret, stage in front of the north pillars', style: 'cabaret', furn: function (k) { return defaultFurniture(k); } }
+    ],
+    regency_suite: [
+      { id: 'ex-dinner', name: 'Example: dinner, stage at the west wall', furn: function (k) { return defaultFurniture(k); } },
+      { id: 'ex-dance', name: 'Example: dinner and dance, dance floor in front of the stage', furn: function (k) { return defaultFurniture(k).concat([atStageFront(k, 'east', 6, 6)]); } }
+    ]
+  };
+  function cleanLayout(t) {
+    var num = function (v) { return typeof v === 'number' && isFinite(v); };
+    if (!t || !roomDefs[t.room] || typeof t.name !== 'string' || !t.name.trim() || !Array.isArray(t.tables) || !P.TABLE_TYPES[t.tableType]) return null;
+    var tables = t.tables.filter(function (p) { return p && num(p.x) && num(p.y); }).slice(0, 400).map(function (p) { return { x: p.x, y: p.y }; });
+    var furniture = (Array.isArray(t.furniture) ? t.furniture : []).filter(function (o) { return o && typeof o.kind === 'string' && num(o.x) && num(o.y) && num(o.w) && num(o.d); }).slice(0, 20)
+      .map(function (o) {
+        var q = { label: String(o.label || (FKIND[o.kind] ? FKIND[o.kind].label : o.kind)).slice(0, 40), kind: String(o.kind).slice(0, 20), x: o.x, y: o.y, w: o.w, d: o.d };
+        if (/^(north|south|east|west)$/.test(o.faces)) q.faces = o.faces;
+        return q;
+      });
+    return { room: t.room, name: t.name.trim().slice(0, 60), made: String(t.made || '').slice(0, 30) || 'earlier', style: typeof t.style === 'string' ? t.style.slice(0, 20) : null,
+             tableType: t.tableType, spare: num(t.spare) ? Math.max(0, Math.min(12, t.spare)) : 3, furniture: furniture, tables: tables };
+  }
+  function templatesFor(k) {
+    var ex = (EXAMPLES[k] || []).map(function (e) { return { id: e.id, name: e.name, example: true, style: e.style || null, furniture: e.furn(k), tables: null }; });
+    return { examples: ex, shared: team.items.filter(function (t) { return t.room === k; }), mine: store.custom.filter(function (t) { return t.room === k; }) };
+  }
+  function findTemplate(k, id) { var t = templatesFor(k); return t.examples.concat(t.shared, t.mine).filter(function (x) { return x.id === id; })[0] || null; }
+
+  function renderTemplates() {
+    var n = cur(), t = templatesFor(key), sel = $('#tmplSel');
+    var opt = function (x) { return '<option value="' + esc(x.id) + '"' + (n.tmpl === x.id ? ' selected' : '') + '>' + esc(x.name) + '</option>'; };
+    sel.innerHTML = '<option value="">Choose a layout…</option>' +
+      (t.examples.length ? '<optgroup label="Examples">' + t.examples.map(opt).join('') + '</optgroup>' : '') +
+      (t.shared.length ? '<optgroup label="Shared with the team">' + t.shared.map(opt).join('') + '</optgroup>' : '') +
+      (t.mine.length ? '<optgroup label="Saved on this computer">' + t.mine.map(opt).join('') + '</optgroup>' : '');
+    var mine = t.mine.filter(function (x) { return x.id === n.tmpl; })[0], sh = t.shared.filter(function (x) { return x.id === n.tmpl; })[0];
+    var canChange = !!mine || (!!sh && canEditTeam());
+    $('#tmplUpdate').hidden = !canChange; $('#tmplDelete').hidden = !canChange; $('#tmplDelete').textContent = 'Delete it';
+    var wr = $('#tmplWhereRow'); wr.hidden = !canEditTeam();
+    var msg = '';
+    if (sh) msg = 'Shared with the team' + (sh.by ? ', last saved by ' + sh.by : '') + (sh.at ? ' on ' + new Date(sh.at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '') + ': ' + sh.tables.length + ' tables and ' + sh.furniture.length + ' floor ' + (sh.furniture.length === 1 ? 'item' : 'items') + '.' + (canEditTeam() ? ' Use Update it to replace it with the layout as it is now.' : ' You can use it but not change it.');
+    else if (mine) msg = 'Saved on this computer ' + mine.made + ': ' + mine.tables.length + ' tables and ' + mine.furniture.length + ' floor ' + (mine.furniture.length === 1 ? 'item' : 'items') + '. Use Update it to replace it with the layout as it is now.';
+    else if (n.tmpl && /^ex-/.test(n.tmpl)) msg = 'An example set-up. Where the stage and dance floor go is a guess: move them, then Save this layout to keep your version.';
+    else msg = t.mine.length || t.shared.length || t.examples.length ? 'Pick a layout to set the room out that way, or set the floor out yourself and save it.' : 'Set the floor out, then Save this layout to use it again.';
+    if (!storeOk) msg += ' Layouts saved on this computer will only last until this page is closed here.';
+    $('#tmplNote').textContent = msg;
+  }
+
+  function applyTemplate(tpl) {
+    var n = cur(), r = n.room;
+    act(function () {
+      var st = tpl.style && r.styles ? r.styles.filter(function (s) { return s.key === tpl.style; })[0] : null;
+      if (st) { r.style = st.key; r.tableType = st.type; r.approvedCapacity = st.max; }
+      else if (tpl.tableType && P.TABLE_TYPES[tpl.tableType]) {
+        r.tableType = tpl.tableType;
+        var byType = (r.styles || []).filter(function (s) { return s.type === r.tableType; })[0];
+        if (byType) { r.style = byType.key; r.approvedCapacity = byType.max; }
+      }
+      if (tpl.spare != null) r.spare = Math.max(0, Math.min(12, +tpl.spare || 0));
+      setFurniture(r, tpl.furniture || []);
+      var need = P.tablesNeededFor(n.companies, r.tableType), spare = P.spareTables(r, need), lay;
+      if (tpl.tables && tpl.tables.length) lay = P.layoutFromPositions(r, r.tableType, tpl.tables, n.companies.length ? need + spare : tpl.tables.length);
+      else lay = n.companies.length ? P.makeLayout(r, r.tableType, need, spare) : { tables: [], clearance: null, pattern: null, tight: false, ok: true, capacity: null };
+      n.tables = lay.tables; n.layout = layoutInfo(lay);
+      invalidate(n);
+      n.tmpl = tpl.id;
+      rescore(n);
+      plan(false, 'Set the room out as "' + tpl.name.replace(/^Example: /, '') + '".');
+    });
+    renderRoomControls();
+  }
+  $('#tmplSel').addEventListener('change', function () {
+    var id = this.value; if (!id) { cur().tmpl = null; renderTemplates(); return; }
+    var tpl = findTemplate(key, id); if (tpl) applyTemplate(tpl);
+  });
+
+  function layoutSnapshot(n) {
+    return { style: n.room.style || null, tableType: n.room.tableType, spare: n.room.spare, furniture: clone(movableItems(n.room)).map(function (o) { delete o.movable; return o; }),
+             tables: n.tables.map(function (t) { return { x: t.x, y: t.y }; }) };
+  }
+  function tmplError(msg) { var e = $('#tmplErr'); e.textContent = msg; e.hidden = !msg; }
+  function saveCurrentAsTemplate() {
+    var n = cur(), name = String($('#tmplName').value || '').trim();
+    if (!name) return tmplError('Give the layout a name.');
+    var toTeam = canEditTeam() && $('#tmplWhere').value === 'team';
+    var made = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    var tpl = Object.assign({ room: key, name: name, made: made }, layoutSnapshot(n));
+    var pool = toTeam ? team.items : store.custom;
+    if (pool.some(function (t) { return t.room === key && t.name.toLowerCase() === name.toLowerCase(); })) return tmplError('There is already a layout with that name. Choose another, or select it and use Update it.');
+    if (toTeam) {
+      $('#tmplSaveGo').disabled = true; tmplError('');
+      sb('/rest/v1/layouts', { method: 'POST', prefer: 'return=representation', body: { room: key, name: name, data: toData(tpl) } }).then(function (r) {
+        if (r.status === 409) return tmplError('Someone has already shared a layout with that name. Choose another.');
+        if (!r.ok || !r.json || !r.json[0]) return tmplError(r.status === 401 || r.status === 403 ? 'Your account is not allowed to save shared layouts.' : 'Could not save it to the shared store (' + r.status + ').');
+        var item = fromRow(r.json[0]); team.items.push(item); n.tmpl = item.id; $('#tmplForm').hidden = true; tmplError('');
+        renderTemplates(); renderTeam(); notify('Shared the layout "' + name + '" with the team.', { noUndo: true });
+      }).catch(function (e) { tmplError(netError(e)); }).then(function () { $('#tmplSaveGo').disabled = false; });
+      return;
+    }
+    tpl.id = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    store.custom.push(tpl);
+    var kept = saveStore();
+    n.tmpl = tpl.id; $('#tmplForm').hidden = true; tmplError('');
+    renderTemplates();
+    notify('Saved the layout "' + name + '" on this computer.' + (kept ? '' : ' It will last until this page is closed.'), { noUndo: true });
+  }
+  $('#tmplItems').addEventListener('click', function () { $('#setup').open = true; $('#fitems').scrollIntoView({ block: 'center' }); });
+  $('#tmplSave').addEventListener('click', function () { var f = $('#tmplForm'); f.hidden = !f.hidden; tmplError(''); if (!f.hidden) { $('#tmplName').value = ''; $('#tmplName').focus(); } });
+  $('#tmplCancel').addEventListener('click', function () { $('#tmplForm').hidden = true; tmplError(''); });
+  $('#tmplSaveGo').addEventListener('click', saveCurrentAsTemplate);
+  $('#tmplName').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveCurrentAsTemplate(); } else if (e.key === 'Escape') { $('#tmplForm').hidden = true; } });
+  $('#tmplUpdate').addEventListener('click', function () {
+    var n = cur(), made = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    var sh = team.items.filter(function (x) { return x.id === n.tmpl; })[0];
+    if (sh) {
+      if (!canEditTeam()) return;
+      var snap = Object.assign({ room: sh.room, name: sh.name, made: made }, layoutSnapshot(n));
+      sb('/rest/v1/layouts?id=eq.' + encodeURIComponent(sh.rowId) + '&version=eq.' + sh.version, { method: 'PATCH', prefer: 'return=representation', body: { data: toData(snap), version: sh.version + 1 } }).then(function (r) {
+        if (r.ok && r.json && r.json[0]) { var item = fromRow(r.json[0]); team.items = team.items.map(function (x) { return x.rowId === item.rowId ? item : x; }); n.tmpl = item.id; renderTemplates(); notify('Updated the shared layout "' + sh.name + '".', { noUndo: true }); return; }
+        if (r.ok) { notify('Someone else changed or deleted "' + sh.name + '" while you had it open. Their version has been loaded. Check it, then update again if you still want to.', { noUndo: true }); return teamSync(); }
+        notify(r.status === 403 ? 'Your account is not allowed to change shared layouts.' : 'Could not update it (' + r.status + ').', { noUndo: true });
+      }).catch(function (e) { notify(netError(e), { noUndo: true }); });
+      return;
+    }
+    var t = store.custom.filter(function (x) { return x.id === n.tmpl; })[0]; if (!t) return;
+    Object.assign(t, layoutSnapshot(n), { made: made });
+    var kept = saveStore(); renderTemplates();
+    notify('Updated "' + t.name + '" with the layout as it is now.' + (kept ? '' : ' It will last until this page is closed.'), { noUndo: true });
+  });
+  var delTimer = null;
+  $('#tmplDelete').addEventListener('click', function () {
+    var b = this, n = cur();
+    var sh = team.items.filter(function (x) { return x.id === n.tmpl; })[0], t = sh || store.custom.filter(function (x) { return x.id === n.tmpl; })[0]; if (!t) return;
+    if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = sh ? 'Click again to delete for everyone' : 'Click again to delete'; clearTimeout(delTimer); delTimer = setTimeout(function () { b.dataset.sure = ''; b.textContent = 'Delete it'; }, 3500); return; }
+    b.dataset.sure = ''; clearTimeout(delTimer);
+    if (sh) {
+      sb('/rest/v1/layouts?id=eq.' + encodeURIComponent(sh.rowId), { method: 'DELETE', prefer: 'return=representation' }).then(function (r) {
+        if (r.ok && r.json && r.json.length) { team.items = team.items.filter(function (x) { return x.rowId !== sh.rowId; }); n.tmpl = null; renderTemplates(); renderTeam(); notify('Deleted the shared layout "' + sh.name + '" for everyone. The room itself is unchanged.', { noUndo: true }); }
+        else notify(r.ok ? 'That layout had already been deleted.' : r.status === 403 ? 'Your account is not allowed to delete shared layouts.' : 'Could not delete it (' + r.status + ').', { noUndo: true });
+        if (r.ok) teamSync();
+      }).catch(function (e) { notify(netError(e), { noUndo: true }); });
+      return;
+    }
+    store.custom = store.custom.filter(function (x) { return x.id !== t.id; }); saveStore();
+    n.tmpl = null; renderTemplates();
+    notify('Deleted the layout "' + t.name + '". The room itself is unchanged.', { noUndo: true });
+  });
+  function tmplMsg(text) { var m = $('#tmplMsg'); m.textContent = text; m.hidden = !text; }
+  $('#tmplShow').addEventListener('click', function () {
+    var box = $('#tmplText');
+    box.hidden = false; $('#tmplLoad').hidden = false;
+    box.value = JSON.stringify({ kind: 'grand-pier-layouts', version: 1, layouts: store.custom }, null, 1);
+    box.focus(); box.select();
+    tmplMsg(store.custom.length ? 'Copy this text to keep or share your layouts. To load layouts, paste text here and choose Load.' : 'You have not saved any layouts yet. To load layouts, paste text here and choose Load.');
+  });
+  $('#tmplLoad').addEventListener('click', function () {
+    var data; try { data = JSON.parse($('#tmplText').value); } catch (e) { return tmplMsg('That text could not be read. Paste the whole text exactly as it was copied.'); }
+    var list = data && Array.isArray(data.layouts) ? data.layouts : [];
+    var added = 0, skipped = 0;
+    list.forEach(function (raw) {
+      var t = cleanLayout(raw);
+      if (!t) { skipped++; return; }
+      var name = t.name, base = name, c = 2;
+      while (store.custom.some(function (x) { return x.room === t.room && x.name.toLowerCase() === name.toLowerCase(); })) name = base + ' (' + (c++) + ')';
+      t.name = name; t.id = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      store.custom.push(t); added++;
+    });
+    saveStore(); renderTemplates();
+    tmplMsg(added ? 'Loaded ' + added + (added === 1 ? ' layout' : ' layouts') + (skipped ? ', and skipped ' + skipped + ' that could not be used' : '') + '.' : 'No layouts could be loaded from that text.');
+  });
+  window.__pl = { cur: cur, geom: function () { return geom; }, events: function () { return events; }, team: function () { return team; } };
+
+  // ---------------------------------------------------------------- shared layouts for the whole team
+  // A copy for the Pier can have these two filled in, so people only have to sign in.
+  var SHARED_DEFAULT = { url: '', anonKey: '' };
+  var TEAM_KEY = 'grandpier.planner.team.v1';
+  var team = { url: SHARED_DEFAULT.url, anonKey: SHARED_DEFAULT.anonKey, session: null, role: null, items: [], busy: false, note: '' };
+  function loadTeam() {
+    try {
+      var s = JSON.parse(window.localStorage.getItem(TEAM_KEY) || 'null');
+      if (!s) return;
+      if (!SHARED_DEFAULT.url) { team.url = s.url || ''; team.anonKey = s.anonKey || ''; }
+      team.session = s.session || null; team.role = s.role || null;
+    } catch (e) { /* nothing saved */ }
+  }
+  function saveTeam() { try { window.localStorage.setItem(TEAM_KEY, JSON.stringify({ url: team.url, anonKey: team.anonKey, session: team.session, role: team.role })); } catch (e) { /* not kept */ } }
+  function teamOn() { return !!(team.url && team.anonKey); }
+  function teamIn() { return !!(teamOn() && team.session && team.session.access_token); }
+  function canEditTeam() { return teamIn() && team.role === 'editor'; }
+  function sbBase() { return team.url.replace(/\/+$/, ''); }
+  function sbRaw(path, opts) {
+    opts = opts || {};
+    var headers = { apikey: team.anonKey, 'Content-Type': 'application/json', Authorization: 'Bearer ' + (team.session && team.session.access_token ? team.session.access_token : team.anonKey) };
+    if (opts.prefer) headers.Prefer = opts.prefer;
+    return fetch(sbBase() + path, { method: opts.method || 'GET', headers: headers, body: opts.body ? JSON.stringify(opts.body) : undefined }).then(function (res) {
+      return res.text().then(function (txt) { var j = null; try { j = txt ? JSON.parse(txt) : null; } catch (e) { /* not json */ } return { ok: res.ok, status: res.status, json: j }; });
+    });
+  }
+  function setSession(j) { team.session = { access_token: j.access_token, refresh_token: j.refresh_token, email: (j.user && j.user.email) || (team.session && team.session.email) || '' }; saveTeam(); }
+  function refreshSession() {
+    if (!team.session || !team.session.refresh_token) return Promise.resolve(false);
+    return fetch(sbBase() + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { apikey: team.anonKey, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: team.session.refresh_token }) })
+      .then(function (res) { if (!res.ok) return false; return res.json().then(function (j) { setSession(j); return true; }); });
+  }
+  function sb(path, opts) {
+    return sbRaw(path, opts).then(function (r) {
+      if (r.status !== 401) return r;
+      return refreshSession().then(function (ok) { return ok ? sbRaw(path, opts) : r; });
+    });
+  }
+  function netError(e) { return e && e.name === 'TypeError' ? 'Could not reach the shared store from here. Check the web address and your connection. (A copy opened inside Claude cannot reach outside sites.)' : (e && e.message) || 'Something went wrong.'; }
+  function fromRow(r) {
+    if (!r || !r.data) return null;
+    var c = cleanLayout(Object.assign({ room: r.room, name: r.name }, r.data));
+    if (!c) return null;
+    c.id = 's' + r.id; c.shared = true; c.rowId = r.id; c.version = r.version || 1; c.by = r.updated_by || ''; c.at = r.updated_at || '';
+    return c;
+  }
+  function toData(t) { return { made: t.made, style: t.style, tableType: t.tableType, spare: t.spare, furniture: t.furniture, tables: t.tables }; }
+  function teamSync() {
+    if (!teamIn()) { team.items = []; return Promise.resolve(); }
+    team.busy = true; renderTeam();
+    return sb('/rest/v1/planner_users?select=role&email=eq.' + encodeURIComponent(team.session.email)).then(function (r) {
+      if (r.status === 401) { team.session = null; team.role = null; team.items = []; saveTeam(); team.note = 'Your sign in has run out. Please sign in again.'; return; }
+      team.role = r.ok && r.json && r.json[0] ? r.json[0].role : null; saveTeam();
+      if (!team.role) { team.items = []; team.note = 'You are signed in as ' + team.session.email + ', but this account has not been invited to the shared layouts yet.'; return; }
+      return sb('/rest/v1/layouts?select=*&order=name.asc').then(function (l) {
+        if (!l.ok) { team.note = 'Could not load the shared layouts (' + l.status + ').'; return; }
+        team.items = (l.json || []).map(fromRow).filter(Boolean);
+        team.note = '';
+      });
+    }).catch(function (e) { team.note = netError(e); }).then(function () { team.busy = false; renderTeam(); renderTemplates(); renderEvents(); });
+  }
+  function teamSignIn(email, pw) {
+    team.note = 'Signing in…'; renderTeam();
+    return fetch(sbBase() + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { apikey: team.anonKey, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: pw }) })
+      .then(function (res) {
+        if (!res.ok) throw new Error(res.status === 400 || res.status === 401 ? 'That email and password were not accepted.' : 'The sign in did not work (' + res.status + ').');
+        return res.json();
+      }).then(function (j) { setSession(j); team.note = ''; return teamSync(); })
+      .catch(function (e) { team.note = netError(e); renderTeam(); });
+  }
+  function teamSignOut() { team.session = null; team.role = null; team.items = []; team.note = ''; saveTeam(); renderTeam(); renderTemplates(); renderEvents(); }
+  function renderTeam() {
+    var shown = !SHARED_DEFAULT.url;
+    $('#teamConn').hidden = !shown || (teamOn() && teamIn());
+    $('#teamSign').hidden = !(teamOn() && !teamIn());
+    $('#teamOut').hidden = !teamIn();
+    if (!$('#teamUrl').value) $('#teamUrl').value = team.url;
+    if (!$('#teamAnon').value) $('#teamAnon').value = team.anonKey;
+    var m;
+    if (!teamOn()) m = 'Not connected. To share layouts with the whole team, enter the web address and public key of the shared store (see the setup notes), then sign in with the email you were invited with.';
+    else if (!teamIn()) m = team.note || 'Connected. Sign in with the email you were invited with.';
+    else if (team.busy) m = 'Loading the shared layouts…';
+    else m = team.note || 'Signed in as ' + team.session.email + (team.role ? ' (' + (team.role === 'editor' ? 'can save and change shared layouts' : 'can use shared layouts') + '). ' + team.items.length + ' shared.' : '.');
+    $('#teamMsg').textContent = m;
+  }
+  $('#teamSaveConn').addEventListener('click', function () {
+    var u = String($('#teamUrl').value || '').trim().replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, ''), k = String($('#teamAnon').value || '').trim();
+    $('#teamUrl').value = u;
+    if (!/^https:\/\/[^\s]+$/.test(u) && !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/?$/.test(u)) { team.note = 'The web address should start with https://'; return renderTeam(); }
+    team.url = u; team.anonKey = k; team.session = null; team.role = null; team.items = []; team.note = ''; saveTeam(); renderTeam();
+  });
+  $('#teamIn').addEventListener('click', function () { teamSignIn(String($('#teamEmail').value || '').trim(), $('#teamPass').value).then(function () { $('#teamPass').value = ''; }); });
+  $('#teamPass').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('#teamIn').click(); });
+  $('#teamOutBtn').addEventListener('click', teamSignOut);
+  $('#teamRefresh').addEventListener('click', function () { teamSync(); });
+  loadTeam();
+  setInterval(function () { if (teamIn() && !team.busy && !document.hidden) teamSync(); }, 60000);
+
+  // ---------------------------------------------------------------- events: several nights at once
+  var EV_KEY = 'grandpier.planner.events.v1', evStoreOk = true, evLast = '', evMode = 'new';
+  function evById(id) { return events.filter(function (e) { return e.id === id; })[0] || null; }
+  function roomSig(r) { return [r.key || r.name, r.width, r.depth, r.outline.length, r.obstructions.filter(function (o) { return !o.movable; }).length, r.doors.length].join('|'); }
+  function serializeNight(n) {
+    return { sig: roomSig(n.room), companies: n.companies, snap: n.snap, tables: n.tables, alloc: n.alloc, locks: n.locks, layout: n.layout, stale: n.stale,
+             rs: { tableType: n.room.tableType, style: n.room.style, approvedCapacity: n.room.approvedCapacity, spare: n.room.spare },
+             furn: movableItems(n.room), tmpl: n.tmpl || null, showDiet: n.showDiet };
+  }
+  function restoreNight(room, s) {
+    try {
+      if (!s || !Array.isArray(s.companies)) return null;
+      var n = freshNight(room, []);
+      if (s.sig !== roomSig(n.room) || !Array.isArray(s.tables)) return freshNight(room, s.companies);   // the room drawing has changed: keep the bookings, lay the room out again
+      n.companies = clone(s.companies); n.snap = clone(s.snap || s.companies);
+      n.tables = s.tables; n.alloc = s.alloc || null; n.locks = s.locks || {}; n.layout = s.layout || n.layout; n.stale = !!s.stale;
+      if (s.rs) { n.room.tableType = s.rs.tableType; n.room.style = s.rs.style; n.room.approvedCapacity = s.rs.approvedCapacity; n.room.spare = s.rs.spare; }
+      setFurniture(n.room, s.furn || []);
+      n.tmpl = s.tmpl || null; n.showDiet = s.showDiet !== false;
+      return n;
+    } catch (e) { return null; }
+  }
+  function persistEvents() {
+    try {
+      var o = { v: 1, cur: evId, events: events, nights: {} };
+      events.forEach(function (e) { if (nights[e.id]) o.nights[e.id] = serializeNight(nights[e.id]); });
+      var s = JSON.stringify(o);
+      if (s === evLast) return;
+      window.localStorage.setItem(EV_KEY, s); evLast = s; evStoreOk = true;
+    } catch (e) { evStoreOk = false; }
+  }
+  function startEvents() {
+    var saved = null;
+    try { var raw = window.localStorage.getItem(EV_KEY); if (raw) saved = JSON.parse(raw); } catch (e) { evStoreOk = false; }
+    if (saved && saved.v === 1 && Array.isArray(saved.events)) {
+      saved.events.forEach(function (e) {
+        if (e && roomDefs[e.room] && typeof e.id === 'string') events.push({ id: e.id, name: String(e.name || 'Event').slice(0, 80), date: /^\d{4}-\d{2}-\d{2}$/.test(e.date || '') ? e.date : '', room: e.room });
+      });
+      events.forEach(function (e) {
+        var s = saved.nights && saved.nights[e.id], n = s ? restoreNight(e.room, s) : null;
+        if (n) nights[e.id] = n;
+      });
+    }
+    if (!events.length) events.push({ id: 'e-gh', name: 'Great Hall sample night', date: '', room: 'great_hall' }, { id: 'e-rs', name: 'Regency Suite sample night', date: '', room: 'regency_suite' });
+    evId = saved && evById(saved.cur) ? saved.cur : events[0].id;
+    key = evById(evId).room;
+  }
+  function sortedEvents() {
+    return events.slice().sort(function (a, b) {
+      if (!a.date !== !b.date) return a.date ? -1 : 1;
+      return (a.date || '').localeCompare(b.date || '') || a.name.localeCompare(b.name);
+    });
+  }
+  function fmtDate(d) {
+    if (!d) return 'no date';
+    var p = d.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  function shortRoom(k) { return roomDefs[k].name.replace(/^The /, ''); }
+  function clashes(e) { return e.date ? events.filter(function (o) { return o.id !== e.id && o.room === e.room && o.date === e.date; }) : []; }
+  function renderEvents() {
+    var list = sortedEvents(), n = cur();
+    $('#evSel').innerHTML = list.map(function (e) {
+      return '<option value="' + esc(e.id) + '"' + (e.id === evId ? ' selected' : '') + '>' + esc(e.name + ' (' + fmtDate(e.date) + ', ' + shortRoom(e.room) + ')') + '</option>';
+    }).join('');
+    var me = evById(evId), clash = clashes(me), note = '';
+    if (clash.length) note = 'Careful: ' + clash.map(function (c) { return '"' + c.name + '"'; }).join(' and ') + (clash.length === 1 ? ' is' : ' are') + ' also booked in the ' + shortRoom(me.room) + ' on ' + fmtDate(me.date) + '.';
+    else note = events.length + (events.length === 1 ? ' event' : ' events') + '. Each keeps its own bookings, layout and seating. Open All events to see them side by side.';
+    if (!evStoreOk) note += ' Events cannot be saved in this browser, so they will be lost when the page closes.';
+    var ne = $('#evNote'); ne.textContent = note; ne.classList.toggle('warn', clash.length > 0);
+    $('#evDel').textContent = 'Delete it';
+    $('#evTable').innerHTML = '<table class="evt"><thead><tr><th>Date</th><th>Event</th><th>Room</th><th>Guests</th><th>Tables</th><th>Layout</th><th></th></tr></thead><tbody>' + list.map(function (e) {
+      var nn = nights[e.id], t = nn && nn.tmpl ? findTemplate(e.room, nn.tmpl) : null, cl = clashes(e).length;
+      return '<tr' + (e.id === evId ? ' class="on"' : '') + '><td>' + esc(fmtDate(e.date)) + (cl ? ' ⚠' : '') + '</td><td>' + esc(e.name) + '</td><td>' + esc(shortRoom(e.room)) + '</td><td>' + (nn ? guestsOf(nn) : '–') +
+        '</td><td>' + (nn ? nn.tables.length : '–') + '</td><td>' + esc(t ? t.name.replace(/^Example: /, '') : '') + '</td><td>' + (e.id === evId ? 'Open' : '<button type="button" class="btn small" data-ev="' + esc(e.id) + '">Open</button>') + '</td></tr>';
+    }).join('') + '</tbody></table>';
+  }
+  function switchEvent(id) {
+    var e = evById(id); if (!e) return;
+    persistEvents();
+    evId = id; key = e.room; openDetail = -1;
+    var n = cur(); n.hover = null;
+    renderAll();
+    if (!n.alloc && !n.banner) { plan(); renderBookings(); }
+  }
+  function newEventId() { return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
+  function createEvent(o) {
+    var k = o.room, id = newEventId(), comps = o.book === 'none' ? [] : o.book === 'copy' ? clone(cur().companies) : null;
+    persistEvents();
+    events.push({ id: id, name: o.name, date: o.date || '', room: k });
+    evId = id; key = k; openDetail = -1;
+    nights[id] = comps ? freshNight(k, comps) : freshNight(k);
+    var tpl = o.layoutId ? findTemplate(k, o.layoutId) : null;
+    if (tpl) applyTemplate(tpl);
+    renderAll();
+    if (!tpl && nights[id].companies.length && !nights[id].alloc) { plan(); renderBookings(); }
+  }
+  function evError(m) { var e = $('#evErr'); e.textContent = m; e.hidden = !m; }
+  function openEvForm(mode) {
+    evMode = mode; evError('');
+    var f = $('#evForm'), me = evById(evId);
+    f.hidden = false; $('#evNewOnly').hidden = mode !== 'new';
+    $('#evGo').textContent = mode === 'new' ? 'Create the event' : 'Save';
+    $('#evName').value = mode === 'new' ? '' : me.name; $('#evDate').value = mode === 'new' ? '' : me.date;
+    if (mode === 'new') {
+      $('#evRoom').innerHTML = Object.keys(roomDefs).map(function (k) { return '<option value="' + k + '"' + (k === key ? ' selected' : '') + '>' + esc(shortRoom(k)) + '</option>'; }).join('');
+      fillEvLayouts();
+    }
+    $('#evName').focus();
+  }
+  function fillEvLayouts() {
+    var k = $('#evRoom').value, t = templatesFor(k);
+    var opt = function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.name) + '</option>'; };
+    $('#evLayout').innerHTML = '<option value="">The room as it comes</option>' +
+      (t.examples.length ? '<optgroup label="Examples">' + t.examples.map(opt).join('') + '</optgroup>' : '') +
+      (t.shared.length ? '<optgroup label="Shared with the team">' + t.shared.map(opt).join('') + '</optgroup>' : '') +
+      (t.mine.length ? '<optgroup label="Saved on this computer">' + t.mine.map(opt).join('') + '</optgroup>' : '');
+  }
+  $('#evSel').addEventListener('change', function () { switchEvent(this.value); });
+  $('#evNew').addEventListener('click', function () { if ($('#evForm').hidden || evMode !== 'new') openEvForm('new'); else $('#evForm').hidden = true; });
+  $('#evEdit').addEventListener('click', function () { if ($('#evForm').hidden || evMode !== 'edit') openEvForm('edit'); else $('#evForm').hidden = true; });
+  $('#evRoom').addEventListener('change', fillEvLayouts);
+  $('#evCancel').addEventListener('click', function () { $('#evForm').hidden = true; evError(''); });
+  $('#evGo').addEventListener('click', function () {
+    var name = String($('#evName').value || '').trim(), date = $('#evDate').value || '';
+    if (!name) return evError('Give the event a name.');
+    if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) return evError('That date could not be read.');
+    if (evMode === 'edit') { var me = evById(evId); me.name = name; me.date = date; $('#evForm').hidden = true; renderEvents(); persistEvents(); return; }
+    $('#evForm').hidden = true;
+    createEvent({ name: name, date: date, room: $('#evRoom').value, layoutId: $('#evLayout').value, book: $('#evBook').value });
+  });
+  $('#evName').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#evGo').click(); } else if (e.key === 'Escape') $('#evForm').hidden = true; });
+  $('#evCopy').addEventListener('click', function () {
+    var me = evById(evId), copy = restoreNight(me.room, JSON.parse(JSON.stringify(serializeNight(cur())))), id = newEventId();
+    persistEvents();
+    events.push({ id: id, name: ('Copy of ' + me.name).slice(0, 80), date: '', room: me.room });
+    nights[id] = copy; evId = id; key = me.room; openDetail = -1;
+    renderAll(); openEvForm('edit');
+  });
+  var evDelTimer = null;
+  $('#evDel').addEventListener('click', function () {
+    var b = this;
+    if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Click again to delete'; clearTimeout(evDelTimer); evDelTimer = setTimeout(function () { b.dataset.sure = ''; b.textContent = 'Delete it'; }, 3500); return; }
+    b.dataset.sure = ''; clearTimeout(evDelTimer);
+    var gone = evById(evId), room = gone.room;
+    events = events.filter(function (e) { return e.id !== gone.id; }); delete nights[gone.id];
+    if (!events.length) events.push({ id: newEventId(), name: shortRoom(room) + ' night', date: '', room: room });
+    var next = sortedEvents().filter(function (e) { return e.room === room; })[0] || sortedEvents()[0];
+    evId = next.id; key = next.room; openDetail = -1;
+    cur(); renderAll(); if (!nights[evId].alloc && !nights[evId].banner) { plan(); renderBookings(); }
+    persistEvents();
+    notify('Deleted "' + gone.name + '".', { noUndo: true });
+  });
+  $('#evTable').addEventListener('click', function (e) { var b = e.target.closest('button[data-ev]'); if (b) switchEvent(b.dataset.ev); });
+  var wipeTimer = null;
+  $('#evWipe').addEventListener('click', function () {
+    var b = this;
+    if (b.dataset.sure !== '1') { b.dataset.sure = '1'; b.textContent = 'Click again to clear everything'; clearTimeout(wipeTimer); wipeTimer = setTimeout(function () { b.dataset.sure = ''; b.textContent = 'Clear everything saved in this browser'; }, 3500); return; }
+    b.dataset.sure = ''; b.textContent = 'Clear everything saved in this browser'; clearTimeout(wipeTimer);
+    try { window.localStorage.removeItem(EV_KEY); window.localStorage.removeItem(STORE_KEY); } catch (err) { /* nothing to clear here */ }
+    store = { custom: [] }; events = []; nights = {}; evId = null; evLast = '';
+    startEvents(); cur(); renderAll(); plan(); renderBookings();
+    notify('Cleared the saved events and layouts from this browser.', { noUndo: true });
+  });
+  setInterval(persistEvents, 2500);
+  window.addEventListener('pagehide', persistEvents);
+  document.addEventListener('visibilitychange', function () { if (document.hidden) persistEvents(); });
+
+
   // ---------------------------------------------------------------- pointer interaction
   var drag = null, tip = $('#tip');
   function pos(e) { var r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
   function toM(p) { return { x: (p.x - geom.padL) / geom.sc, y: geom.depth - (p.y - geom.padT) / geom.sc }; }
+  function hitItem(p) {
+    var n = cur(), m = toM(p), obs = n.room.obstructions;
+    for (var i = obs.length - 1; i >= 0; i--) { var o = obs[i]; if (o.movable && m.x >= o.x && m.x <= o.x + o.w && m.y >= o.y && m.y <= o.y + o.d) return i; }
+    return -1;
+  }
+
   function hitTable(p) {
     var n = cur(), m = toM(p);
     for (var i = n.tables.length - 1; i >= 0; i--) {
@@ -2851,8 +3691,14 @@
   }
 
   canvas.addEventListener('pointerdown', function (e) {
-    var n = cur(), p = pos(e), i = hitTable(p);
-    canvas.style.touchAction = (i >= 0 && n.edit) ? 'none' : 'pan-x pan-y';
+    var n = cur(), p = pos(e), i = hitTable(p), fi = (i < 0 && n.edit) ? hitItem(p) : -1;
+    canvas.style.touchAction = ((i >= 0 || fi >= 0) && n.edit) ? 'none' : 'pan-x pan-y';
+    if (fi >= 0) {
+      var m0 = toM(p), o0 = n.room.obstructions[fi];
+      drag = { item: fi, dx: o0.x - m0.x, dy: o0.y - m0.y, moved: false, before: n.alloc ? snapJSON(n) : null, oldFurn: clone(movableItems(n.room)) };
+      canvas.setPointerCapture(e.pointerId); canvas.classList.add('grab');
+      n.sel = null; renderSel(); markRows(); draw(); return;
+    }
     if (i < 0) { n.sel = null; renderSel(); markRows(); draw(); return; }
     n.sel = i;
     if (n.edit) {
@@ -2867,6 +3713,13 @@
 
   canvas.addEventListener('pointermove', function (e) {
     var n = cur(), p = pos(e);
+    if (drag && drag.item != null) {
+      var mi = toM(p), oi = n.room.obstructions[drag.item];
+      var ox = rd2(Math.round((mi.x + drag.dx) * 10) / 10), oy = rd2(Math.round((mi.y + drag.dy) * 10) / 10);
+      ox = Math.max(0, Math.min(n.room.width - oi.w, ox)); oy = Math.max(0, Math.min(n.room.depth - oi.d, oy));
+      if (ox !== oi.x || oy !== oi.y) { oi.x = ox; oi.y = oy; drag.moved = true; }
+      tip.hidden = true; draw(); return;
+    }
     if (drag) {
       var m = toM(p), t = n.tables[drag.i], r = n.room;
       var nx = Math.round((m.x + drag.dx) * 10) / 10, ny = Math.round((m.y + drag.dy) * 10) / 10;
@@ -2888,6 +3741,11 @@
   function endDrag() {
     if (!drag) return;
     var n = cur();
+    if (drag.item != null) {
+      var d0 = drag; drag = null; canvas.classList.remove('grab');
+      if (d0.moved) commitFloor(d0.before, d0.oldFurn, 'Moved the ' + itemName(n.room.obstructions[d0.item]).toLowerCase() + '.');
+      return;
+    }
     if (drag.moved) {
       if (drag.before) { n.undo.push(drag.before); if (n.undo.length > 50) n.undo.shift(); }
       var used = !!tableOwner(n, n.tables[drag.i].id);
@@ -3001,6 +3859,7 @@
     updateTools(); renderLegend(); renderKitchen(); draw();
   });
   function pickDiet(e) {
+    if (e.target.closest('#dietInfo')) { var nn = cur(); nn.dietInfo = !nn.dietInfo; renderLegend(); return; }
     var b = e.target.closest('[data-diet]'); if (!b) return;
     var n = cur(); n.dietFilter = n.dietFilter === b.dataset.diet ? null : b.dataset.diet;
     if (n.dietFilter && !n.showDiet) { n.showDiet = true; updateTools(); }
@@ -3036,12 +3895,12 @@
   });
   $('#roomSeg').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-room]'); if (!b) return;
-    key = b.dataset.room; openDetail = -1; cur().hover = null;
-    var n = cur();
-    renderAll();
-    if (!n.alloc && !n.banner) { plan(); renderBookings(); }
+    var k = b.dataset.room; if (k === key) return;
+    var inRoom = sortedEvents().filter(function (e) { return e.room === k; })[0];
+    if (inRoom) switchEvent(inRoom.id);
+    else createEvent({ name: shortRoom(k) + ' night', date: '', room: k, book: 'sample' });
   });
-  $('#resetNight').addEventListener('click', function () { nights[key] = freshNight(key); openDetail = -1; renderAll(); plan(); renderBookings(); });
+  $('#resetNight').addEventListener('click', function () { nights[evId] = freshNight(key); openDetail = -1; renderAll(); plan(); renderBookings(); });
   $('#moveBtn').addEventListener('click', function () {
     var n = cur(); n.edit = !n.edit; canvas.classList.toggle('edit', n.edit);
     updateTools(); renderLegend(); renderSel();
@@ -3100,7 +3959,7 @@
   // printing: the plan is redrawn at a fixed, sharp size so the whole room fits the page, then drawn normally again
   function beforePrint() {
     var n = cur(), r = n.room, st = (r.styles || []).filter(function (s) { return s.key === r.style; })[0];
-    $('#printMeta').textContent = r.name + (st ? ', ' + st.label.toLowerCase() + ' (' + st.detail + ')' : '') + '. ' + guestsOf(n) + ' guests. Printed ' +
+    $('#printMeta').textContent = (evById(evId) ? evById(evId).name + (evById(evId).date ? ', ' + fmtDate(evById(evId).date) : '') + '. ' : '') + r.name + (st ? ', ' + st.label.toLowerCase() + ' (' + st.detail + ')' : '') + '. ' + guestsOf(n) + ' guests. Printed ' +
       new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + '.';
     printW = 1280; draw();
   }
@@ -3127,7 +3986,7 @@
   renderAll();
   plan();
   renderBookings();
-  window.__planner = { useRoom: function (def, companies) { roomDefs[def.key] = P.normaliseRoom(def); roomDefs[def.key].key = def.key; key = def.key; nights[key] = freshNight(key, companies); openDetail = -1; renderAll(); plan(); renderBookings(); },
+  window.__planner = { useRoom: function (def, companies) { roomDefs[def.key] = P.normaliseRoom(def); roomDefs[def.key].key = def.key; key = def.key; evById(evId).room = def.key; nights[evId] = freshNight(key, companies); openDetail = -1; renderAll(); plan(); renderBookings(); },
     state: function () { return cur(); }, plan: plan, undo: undo, setSize: setSize, flush: function () { clearTimeout(planTimer); planTimer = null; plan(); } };
 })();
 </script>
