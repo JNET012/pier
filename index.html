@@ -1968,7 +1968,8 @@
             "x": 5.0,
             "y": -15.8,
             "w": 5.6,
-            "d": 5.4
+            "d": 5.4,
+            "movable": true
           },
           {
             "label": "Freefall",
@@ -1976,7 +1977,8 @@
             "x": 43.5,
             "y": -43.2,
             "w": 4.0,
-            "d": 3.6
+            "d": 3.6,
+            "movable": true
           },
           {
             "label": "Robocoaster",
@@ -1984,7 +1986,8 @@
             "x": 54.0,
             "y": -40.4,
             "w": 5.4,
-            "d": 5.4
+            "d": 5.4,
+            "movable": true
           },
           {
             "label": "Stage (position to confirm)",
@@ -1995,6 +1998,15 @@
             "d": 3.5,
             "movable": true,
             "faces": "south"
+          },
+          {
+            "label": "Dodgems",
+            "kind": "ride",
+            "x": 9.9,
+            "y": -23.3,
+            "w": 19.3,
+            "d": 13.7,
+            "movable": true
           }
         ],
         "doors": [
@@ -3235,7 +3247,8 @@
     great_hall: [
       { id: 'ex-banquet', name: 'Example: banquet, stage in front of the north pillars', style: 'banquet', furn: function (k) { return defaultFurniture(k); } },
       { id: 'ex-dance', name: 'Example: banquet with a dance floor in front of the stage', style: 'banquet', furn: function (k) { return defaultFurniture(k).concat([atStageFront(k, 'south', 8, 8)]); } },
-      { id: 'ex-cabaret', name: 'Example: cabaret, stage in front of the north pillars', style: 'cabaret', furn: function (k) { return defaultFurniture(k); } }
+      { id: 'ex-cabaret', name: 'Example: cabaret, stage in front of the north pillars', style: 'cabaret', furn: function (k) { return defaultFurniture(k); } },
+      { id: 'ex-cleared', name: 'Example: banquet with the dodgems cleared out', style: 'banquet', furn: function (k) { return defaultFurniture(k).filter(function (o) { return o.kind !== 'ride'; }); } }
     ],
     regency_suite: [
       { id: 'ex-dinner', name: 'Example: dinner, stage at the west wall', furn: function (k) { return defaultFurniture(k); } },
@@ -3510,8 +3523,10 @@
   function serializeNight(n) {
     return { sig: roomSig(n.room), companies: n.companies, snap: n.snap, tables: n.tables, alloc: n.alloc, locks: n.locks, layout: n.layout, stale: n.stale,
              rs: { tableType: n.room.tableType, style: n.room.style, approvedCapacity: n.room.approvedCapacity, spare: n.room.spare },
-             furn: movableItems(n.room), tmpl: n.tmpl || null, showDiet: n.showDiet };
+             furn: movableItems(n.room), fv: FURN_VERSION, tmpl: n.tmpl || null, showDiet: n.showDiet };
   }
+  // Bump this when the rooms gain new floor items, so events saved earlier in a browser pick the new ones up.
+  var FURN_VERSION = 2;
   function restoreNight(room, s) {
     try {
       if (!s || !Array.isArray(s.companies)) return null;
@@ -3520,7 +3535,9 @@
       n.companies = clone(s.companies); n.snap = clone(s.snap || s.companies);
       n.tables = s.tables; n.alloc = s.alloc || null; n.locks = s.locks || {}; n.layout = s.layout || n.layout; n.stale = !!s.stale;
       if (s.rs) { n.room.tableType = s.rs.tableType; n.room.style = s.rs.style; n.room.approvedCapacity = s.rs.approvedCapacity; n.room.spare = s.rs.spare; }
-      setFurniture(n.room, s.furn || []);
+      var furn = clone(s.furn || []);
+      if (s.fv !== FURN_VERSION) defaultFurniture(room).forEach(function (d) { if (!furn.some(function (o) { return o.label === d.label; })) furn.push(d); });
+      setFurniture(n.room, furn);
       n.tmpl = s.tmpl || null; n.showDiet = s.showDiet !== false;
       return n;
     } catch (e) { return null; }
